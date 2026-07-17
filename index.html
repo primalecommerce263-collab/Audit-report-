@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shopify SEO Audit Tool</title>
+    <!-- html2canvas + jsPDF for PDF export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
+    </script>
+    <style>
+        /* ----- CSS Variables (customizable) ----- */
+        :root {
+            --primary: #6C3CE1;
+            --primary-dark: #5228B5;
+            --primary-light: #8B6FE8;
+            --secondary: #0F1825;
+            --bg: #F5F7FC;
+            --card-bg: #FFFFFF;
+            --text: #1A2332;
+            --text-muted: #6B7A8F;
+            --border: #E8ECF4;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            /* Score colors */
+            --score-low: #EF4444;
+            --score-medium: #F59E0B;
+            --score-high: #10B981;
+            --score-unknown: #94A3B8;
+        }
+
+        /* ----- Reset & Base ----- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 24px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ----- Container ----- */
+        .app-container {
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* ----- Header ----- */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 20px 0 30px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 20px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .brand span {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 400;
+            -webkit-text-fill-color: var(--text-muted);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-settings {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-settings:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ----- Input Section ----- */
+        .input-section {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 32px 36px;
+            box-shadow: var(--shadow);
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+        }
+
+        .input-section .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+        }
+
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-row .url-input-wrap {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .input-row .url-input-wrap .prefix {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .input-row input[type="text"] {
+            width: 100%;
+            padding: 14px 14px 14px 72px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: var(--font);
+            transition: var(--transition);
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+        }
+
+        .input-row input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 60, 225, 0.12);
+            background: #fff;
+        }
+
+        .input-row input[type="text"]::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 14px 32px;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(108, 60, 225, 0.30);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 14px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--card-bg);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ----- Loading ----- */
+        .loading-overlay {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 20px 0;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ----- Dashboard ----- */
+        .dashboard {
+            display: none;
+            animation: fadeUp 0.5s ease;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ----- Store header ----- */
+        .store-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 28px;
+        }
+
+        .store-header .store-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .store-header .store-info .url-badge {
+            background: var(--bg);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            word-break: break-all;
+        }
+
+        .store-header .store-info .status {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .store-header .store-info .status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .store-header .store-info .status .dot.green {
+            background: var(--score-high);
+        }
+        .store-header .store-info .status .dot.yellow {
+            background: var(--score-medium);
+        }
+        .store-header .store-info .status .dot.red {
+            background: var(--score-low);
+        }
+
+        .store-header .download-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .store-header .download-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(108, 60, 225, 0.25);
+        }
+
+        /* ----- Grid layout ----- */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 28px;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ----- Cards ----- */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ----- Screenshot card ----- */
+        .screenshot-card {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .screenshot-card .card-title {
+            padding: 20px 24px 0;
+        }
+
+        .screenshot-wrap {
+            position: relative;
+            width: 100%;
+            padding-top: 62.5%;
+            /* 16:10 ratio */
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .screenshot-wrap img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            transition: var(--transition);
+        }
+
+        .screenshot-wrap .placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            gap: 8px;
+            background: var(--bg);
+        }
+
+        .screenshot-wrap .placeholder .icon {
+            font-size: 40px;
+            opacity: 0.4;
+        }
+
+        /* ----- Score cards ----- */
+        .score-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .score-item {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            transition: var(--transition);
+        }
+
+        .score-item .label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .score-item .label .badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: var(--border);
+            color: var(--text-muted);
+        }
+
+        .score-item .value {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            line-height: 1.2;
+        }
+
+        .score-item .value .denom {
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .score-bar .fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+            width: 0%;
+        }
+
+        .score-item .sub-text {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* score colors */
+        .score-low .value {
+            color: var(--score-low);
+        }
+        .score-low .fill {
+            background: var(--score-low);
+        }
+        .score-medium .value {
+            color: var(--score-medium);
+        }
+        .score-medium .fill {
+            background: var(--score-medium);
+        }
+        .score-high .value {
+            color: var(--score-high);
+        }
+        .score-high .fill {
+            background: var(--score-high);
+        }
+        .score-unknown .value {
+            color: var(--score-unknown);
+        }
+        .score-unknown .fill {
+            background: var(--score-unknown);
+        }
+
+        /* ----- Audit Summary ----- */
+        .summary-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .summary-item {
+            padding: 14px 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary);
+        }
+
+        .summary-item .issue {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .summary-item .explanation {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .summary-item .impact {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .summary-item .impact .tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: var(--border);
+            color: var(--text-muted);
+        }
+
+        .summary-item .impact .tag.high {
+            background: #FEE2E2;
+            color: var(--score-low);
+        }
+        .summary-item .impact .tag.medium {
+            background: #FEF3C7;
+            color: var(--score-medium);
+        }
+        .summary-item .impact .tag.low {
+            background: #D1FAE5;
+            color: var(--score-high);
+        }
+
+        /* ----- Recommendations ----- */
+        .rec-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .rec-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .rec-item .num {
+            width: 26px;
+            height: 26px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .rec-item .content {
+            flex: 1;
+        }
+
+        .rec-item .content .title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .rec-item .content .desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* ----- Settings Modal ----- */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.40);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 32px 36px;
+            max-width: 560px;
+            width: 100%;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.20);
+            animation: fadeUp 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal .modal-sub {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .modal .field {
+            margin-bottom: 18px;
+        }
+
+        .modal .field label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .modal .field .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .modal .field input[type="text"],
+        .modal .field input[type="number"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: var(--font);
+            transition: var(--transition);
+            background: var(--bg);
+            color: var(--text);
+            outline: none;
+        }
+
+        .modal .field input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(108, 60, 225, 0.10);
+            background: #fff;
+        }
+
+        .modal .field .score-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .modal .field .score-row input {
+            text-align: center;
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: flex-end;
+        }
+
+        .modal .modal-actions .btn-close {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 10px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: var(--font);
+            transition: var(--transition);
+        }
+
+        .modal .modal-actions .btn-close:hover {
+            background: var(--card-bg);
+            border-color: var(--text-muted);
+        }
+
+        .modal .modal-actions .btn-save {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 28px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            font-family: var(--font);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal .modal-actions .btn-save:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ----- Footer ----- */
+        .app-footer {
+            margin-top: 48px;
+            padding: 20px 0 10px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ----- Responsive tweaks ----- */
+        @media (max-width: 640px) {
+            body {
+                padding: 12px;
+            }
+            .input-section {
+                padding: 20px;
+            }
+            .input-row {
+                flex-direction: column;
+            }
+            .input-row .url-input-wrap {
+                width: 100%;
+            }
+            .input-row input[type="text"] {
+                padding: 12px 12px 12px 60px;
+                font-size: 14px;
+            }
+            .input-row .url-input-wrap .prefix {
+                left: 10px;
+                font-size: 12px;
+            }
+            .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
+            .store-header {
+                padding: 16px 18px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .store-header .download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .card {
+                padding: 18px 16px;
+            }
+            .dashboard-grid {
+                gap: 16px;
+            }
+            .modal {
+                padding: 24px 20px;
+            }
+            .modal .field .score-row {
+                grid-template-columns: 1fr 1fr;
+            }
+            .brand h1 {
+                font-size: 20px;
+            }
+            .app-header {
+                padding: 12px 0 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-actions {
+                width: 100%;
+            }
+            .header-actions .btn-settings {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+            .modal .field .score-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ----- Utility ----- */
+        .text-center {
+            text-align: center;
+        }
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-center {
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--secondary);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.20);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 2000;
+            max-width: 400px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.error {
+            background: var(--score-low);
+        }
+        .toast.success {
+            background: var(--score-high);
+        }
+
+        /* API key input inline */
+        .api-key-inline {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .api-key-inline label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .api-key-inline input {
+            flex: 1;
+            min-width: 160px;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: var(--font);
+            background: #fff;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .api-key-inline input:focus {
+            border-color: var(--primary);
+        }
+
+        .api-key-inline .hint-text {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .api-key-inline .hint-text a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .api-key-inline .hint-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="app">
+
+        <!-- ===== HEADER ===== -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="brand-icon">SEO</div>
+                <div>
+                    <h1>Shopify Audit <span>|</span></h1>
+                    <span style="font-size:14px;color:var(--text-muted);-webkit-text-fill-color:var(--text-muted);">Find what's blocking buyers</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-settings" id="settingsToggle" aria-label="Settings">
+                    ⚙️ Settings
+                </button>
+            </div>
+        </header>
+
+        <!-- ===== INPUT SECTION ===== -->
+        <section class="input-section" id="inputSection">
+            <p class="subtitle">Enter any Shopify store URL to generate a custom SEO audit report.</p>
+            <div class="input-row">
+                <div class="url-input-wrap">
+                    <span class="prefix">https://</span>
+                    <input type="text" id="storeUrl" placeholder="your-store.myshopify.com" />
+                </div>
+                <button class="btn-primary" id="runAuditBtn">
+                    <span>▶</span> Run Audit
+                </button>
+            </div>
+
+            <!-- API Key inline (optional) -->
+            <div class="api-key-inline">
+                <label for="apiKeyInput">🔑 Screenshot API Key</label>
+                <input type="text" id="apiKeyInput" placeholder="Enter your ScreenshotOne API key" />
+                <span class="hint-text">
+                    <a href="https://screenshotone.com/" target="_blank">Get free key</a>
+                    &nbsp;·&nbsp; leave blank for demo placeholder
+                </span>
+            </div>
+
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+                <span>Auditing store… capturing screenshot &amp; analyzing SEO signals</span>
+            </div>
+        </section>
+
+        <!-- ===== DASHBOARD ===== -->
+        <div class="dashboard" id="dashboard">
+
+            <!-- Store header -->
+            <div class="store-header" id="storeHeader">
+                <div class="store-info">
+                    <span style="font-weight:600;font-size:15px;">📊 Audit Report</span>
+                    <span class="url-badge" id="reportUrl">—</span>
+                    <span class="status">
+                        <span class="dot green" id="statusDot"></span>
+                        <span id="statusText">Ready</span>
+                    </span>
+                </div>
+                <button class="download-btn" id="downloadPdfBtn">
+                    📄 Download PDF Report
+                </button>
+            </div>
+
+            <!-- Grid -->
+            <div class="dashboard-grid">
+
+                <!-- Left column: Screenshot + Summary -->
+                <div class="col-left">
+
+                    <!-- Screenshot card -->
+                    <div class="card screenshot-card" style="margin-bottom:28px;">
+                        <div class="card-title">📸 Homepage Preview</div>
+                        <div class="screenshot-wrap" id="screenshotWrap">
+                            <div class="placeholder" id="placeholderImg">
+                                <span class="icon">🖼️</span>
+                                <span>Screenshot will appear here</span>
+                            </div>
+                            <img id="screenshotImg" style="display:none;" alt="Store homepage screenshot" />
+                        </div>
+                    </div>
+
+                    <!-- Audit Summary -->
+                    <div class="card">
+                        <div class="card-title">📋 Audit Summary</div>
+                        <div class="summary-list" id="summaryList">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right column: Scores + Recommendations -->
+                <div class="col-right">
+
+                    <!-- Score cards -->
+                    <div class="card" style="margin-bottom:28px;">
+                        <div class="card-title">🎯 SEO Scores</div>
+                        <div class="score-grid" id="scoreGrid">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="card">
+                        <div class="card-title">💡 Top Recommendations</div>
+                        <div class="rec-list" id="recList">
+                            <!-- populated by JS -->
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===== FOOTER ===== -->
+        <footer class="app-footer">
+            <p>Shopify SEO Audit Tool &bull; Built for store owners &amp; agencies &bull; Scores are custom, not Google's</p>
+        </footer>
+    </div>
+
+    <!-- ===== SETTINGS MODAL ===== -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <h2>⚙️ Customize Scores</h2>
+            <p class="modal-sub">Adjust the scoring thresholds and weightings for your audit. Changes apply to the next audit.</p>
+
+            <div class="field">
+                <label>Alt Text Score <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
+                <div class="score-row">
+                    <input type="number" id="scoreAlt" value="10" min="0" max="100" />
+                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
+                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Product SEO <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
+                <div class="score-row">
+                    <input type="number" id="scoreProduct" value="18" min="0" max="100" />
+                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
+                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Performance <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
+                <div class="score-row">
+                    <input type="number" id="scorePerformance" value="15" min="0" max="100" />
+                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
+                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Mobile Friendly <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
+                <div class="score-row">
+                    <input type="number" id="scoreMobile" value="22" min="0" max="100" />
+                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
+                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Overall Score <span style="font-weight:400;color:var(--text-muted);">(auto-calculated)</span></label>
+                <div style="font-size:28px;font-weight:700;color:var(--primary);" id="overallPreview">—</div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-close" id="modalClose">Cancel</button>
+                <button class="btn-save" id="modalSave">Save Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TOAST ===== -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ----- DOM refs -----
+            const storeUrlInput = document.getElementById('storeUrl');
+            const apiKeyInput = document.getElementById('apiKeyInput');
+            const runBtn = document.getElementById('runAuditBtn');
+            const loading = document.getElementById('loadingOverlay');
+            const dashboard = document.getElementById('dashboard');
+            const reportUrl = document.getElementById('reportUrl');
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const screenshotImg = document.getElementById('screenshotImg');
+            const placeholderImg = document.getElementById('placeholderImg');
+            const scoreGrid = document.getElementById('scoreGrid');
+            const summaryList = document.getElementById('summaryList');
+            const recList = document.getElementById('recList');
+            const downloadBtn = document.getElementById('downloadPdfBtn');
+            const settingsToggle = document.getElementById('settingsToggle');
+            const settingsModal = document.getElementById('settingsModal');
+            const modalClose = document.getElementById('modalClose');
+            const modalSave = document.getElementById('modalSave');
+            const overallPreview = document.getElementById('overallPreview');
+            const toast = document.getElementById('toast');
+
+            // Score inputs
+            const scoreAlt = document.getElementById('scoreAlt');
+            const scoreProduct = document.getElementById('scoreProduct');
+            const scorePerformance = document.getElementById('scorePerformance');
+            const scoreMobile = document.getElementById('scoreMobile');
+
+            // ----- State -----
+            let currentScores = {
+                alt: 10,
+                product: 18,
+                performance: 15,
+                mobile: 22,
+                overall: 0,
+            };
+
+            let auditData = null;
+            let toastTimer = null;
+
+            // ----- Helpers -----
+            function showToast(msg, type = 'info') {
+                if (toastTimer) clearTimeout(toastTimer);
+                toast.textContent = msg;
+                toast.className = 'toast ' + type;
+                // force reflow
+                void toast.offsetWidth;
+                toast.classList.add('show');
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000);
+            }
+
+            function getApiKey() {
+                return apiKeyInput.value.trim() || localStorage.getItem('shopifyAudit_apiKey') || '';
+            }
+
+            function saveApiKey(key) {
+                if (key) localStorage.setItem('shopifyAudit_apiKey', key);
+                else localStorage.removeItem('shopifyAudit_apiKey');
+            }
+
+            function getScoresFromInputs() {
+                const a = parseInt(scoreAlt.value) || 0;
+                const p = parseInt(scoreProduct.value) || 0;
+                const pe = parseInt(scorePerformance.value) || 0;
+                const m = parseInt(scoreMobile.value) || 0;
+                const overall = Math.round((a + p + pe + m) / 4);
+                return { alt: a, product: p, performance: pe, mobile: m, overall };
+            }
+
+            function updateOverallPreview() {
+                const s = getScoresFromInputs();
+                overallPreview.textContent = s.overall + '/100';
+            }
+
+            function getScoreClass(score) {
+                if (score >= 70) return 'score-high';
+                if (score >= 40) return 'score-medium';
+                return 'score-low';
+            }
+
+            function getScoreLabel(score) {
+                if (score >= 70) return 'Good';
+                if (score >= 40) return 'Needs Work';
+                return 'Critical';
+            }
+
+            // ----- Load saved settings -----
+            function loadSettings() {
+                const saved = localStorage.getItem('shopifyAudit_scores');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        if (parsed.alt !== undefined) scoreAlt.value = parsed.alt;
+                        if (parsed.product !== undefined) scoreProduct.value = parsed.product;
+                        if (parsed.performance !== undefined) scorePerformance.value = parsed.performance;
+                        if (parsed.mobile !== undefined) scoreMobile.value = parsed.mobile;
+                        currentScores = getScoresFromInputs();
+                        updateOverallPreview();
+                    } catch (_) { /* ignore */ }
+                }
+                const key = localStorage.getItem('shopifyAudit_apiKey');
+                if (key) apiKeyInput.value = key;
+            }
+
+            function saveSettings() {
+                const s = getScoresFromInputs();
+                localStorage.setItem('shopifyAudit_scores', JSON.stringify({
+                    alt: s.alt,
+                    product: s.product,
+                    performance: s.performance,
+                    mobile: s.mobile,
+                }));
+                currentScores = s;
+                const key = getApiKey();
+                if (key) saveApiKey(key);
+                showToast('Settings saved!', 'success');
+                settingsModal.classList.remove('active');
+                // If we have audit data, re-render with new scores
+                if (auditData) {
+                    renderDashboard(auditData.url, auditData.screenshotUrl);
+                }
+            }
+
+            // ----- Screenshot capture -----
+            async function captureScreenshot(url) {
+                const apiKey = getApiKey();
+                if (!apiKey) {
+                    // Demo mode: return a placeholder
+                    return null;
+                }
+
+                // Use ScreenshotOne API
+                const cleanUrl = url.startsWith('http') ? url : 'https://' + url;
+                const endpoint =
+                    `https://api.screenshotone.com/take?url=${encodeURIComponent(cleanUrl)}&api_key=${apiKey}&viewport_width=1280&viewport_height=800&full_page=true&format=png&block_ads=true&block_cookie_banners=true`;
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'GET',
+                        headers: { 'Accept': 'image/png' },
+                    });
+
+                    if (!response.ok) {
+                        const text = await response.text();
+                        throw new Error(`Screenshot API error: ${response.status} ${text}`);
+                    }
+
+                    const blob = await response.blob();
+                    return URL.createObjectURL(blob);
+                } catch (err) {
+                    console.warn('Screenshot capture failed:', err);
+                    return null;
+                }
+            }
+
+            // ----- Generate audit data (simulated SEO analysis) -----
+            function generateAuditData(storeUrl, scores) {
+                const url = storeUrl.startsWith('http') ? storeUrl : 'https://' + storeUrl;
+
+                // Build summary items based on scores
+                const summaries = [];
+                const recs = [];
+
+                // Alt Text
+                const altScore = scores.alt;
+                const altIssue = altScore < 50 ?
+                    'Missing or poorly written alt text on product images.' :
+                    'Alt text is present but could be more descriptive.';
+                const altImpact = 'Makes it harder for Google to understand product images, reducing visibility in search results and Google Images.';
+                const altFix = 'Write descriptive alt text for every product image that includes relevant keywords and describes the product.';
+                summaries.push({
+                    title: 'Alt Text Quality',
+                    issue: altIssue,
+                    explanation: altImpact,
+                    impact: altScore < 30 ? 'high' : altScore < 60 ? 'medium' : 'low',
+                    score: altScore,
+                });
+                recs.push({ title: 'Improve Image Alt Text', desc: altFix });
+
+                // Product SEO
+                const prodScore = scores.product;
+                const prodIssue = prodScore < 50 ?
+                    'Product titles, descriptions, or meta tags are under-optimized.' :
+                    'Product pages could benefit from richer SEO content.';
+                const prodImpact = 'Weak product SEO means lower rankings for product-specific searches, missing high-intent buyers.';
+                const prodFix = 'Optimize product titles with primary keywords, write unique descriptions (200+ words), and use structured data.';
+                summaries.push({
+                    title: 'Product Page SEO',
+                    issue: prodIssue,
+                    explanation: prodImpact,
+                    impact: prodScore < 30 ? 'high' : prodScore < 60 ? 'medium' : 'low',
+                    score: prodScore,
+                });
+                recs.push({ title: 'Optimize Product Pages', desc: prodFix });
+
+                // Performance
+                const perfScore = scores.performance;
+                const perfIssue = perfScore < 50 ?
+                    'Page load speed is slow, hurting user experience.' :
+                    'Performance could be improved with image optimization and caching.';
+                const perfImpact = 'Slow pages increase bounce rates and reduce conversions, especially on mobile devices.';
+                const perfFix = 'Compress images, enable browser caching, minify CSS/JS, and use a CDN.';
+                summaries.push({
+                    title: 'Performance',
+                    issue: perfIssue,
+                    explanation: perfImpact,
+                    impact: perfScore < 30 ? 'high' : perfScore < 60 ? 'medium' : 'low',
+                    score: perfScore,
+                });
+                recs.push({ title: 'Boost Page Speed', desc: perfFix });
+
+                // Mobile Friendly
+                const mobScore = scores.mobile;
+                const mobIssue = mobScore < 50 ?
+                    'Store is not fully optimized for mobile devices.' :
+                    'Mobile experience could be enhanced for better usability.';
+                const mobImpact = 'Over 60% of Shopify traffic comes from mobile. Poor mobile experience loses buyers.';
+                const mobFix = 'Use a responsive theme, ensure touch targets are large, and simplify mobile navigation.';
+                summaries.push({
+                    title: 'Mobile Friendliness',
+                    issue: mobIssue,
+                    explanation: mobImpact,
+                    impact: mobScore < 30 ? 'high' : mobScore < 60 ? 'medium' : 'low',
+                    score: mobScore,
+                });
+                recs.push({ title: 'Enhance Mobile Experience', desc: mobFix });
+
+                // Overall
+                const overall = scores.overall;
+                const overallIssue = overall < 50 ?
+                    'Multiple critical SEO issues are hurting your store\'s visibility.' :
+                    'Your store has some SEO gaps that need attention.';
+                const overallImpact = 'Poor SEO means fewer buyers find your store, leading to lost sales and lower revenue.';
+                const overallFix = 'Prioritize the recommendations above to improve your store\'s discoverability.';
+                summaries.unshift({
+                    title: 'Overall SEO Health',
+                    issue: overallIssue,
+                    explanation: overallImpact,
+                    impact: overall < 30 ? 'high' : overall < 60 ? 'medium' : 'low',
+                    score: overall,
+                });
+                recs.unshift({ title: 'Audit Summary', desc: overallFix });
+
+                // Sort summaries by impact (high first)
+                const impactOrder = { high: 0, medium: 1, low: 2 };
+                summaries.sort((a, b) => impactOrder[a.impact] - impactOrder[b.impact]);
+
+                return {
+                    url,
+                    scores,
+                    summaries,
+                    recommendations: recs,
+                    timestamp: new Date().toLocaleString(),
+                };
+            }
+
+            // ----- Render dashboard -----
+            function renderDashboard(storeUrl, screenshotUrl) {
+                const scores = currentScores;
+                const data = generateAuditData(storeUrl, scores);
+                auditData = data;
+
+                // Store URL
+                reportUrl.textContent = data.url;
+
+                // Status
+                const overall = scores.overall;
+                if (overall >= 70) {
+                    statusDot.className = 'dot green';
+                    statusText.textContent = 'Good shape';
+                } else if (overall >= 40) {
+                    statusDot.className = 'dot yellow';
+                    statusText.textContent = 'Needs improvement';
+                } else {
+                    statusDot.className = 'dot red';
+                    statusText.textContent = 'Critical issues';
+                }
+
+                // Screenshot
+                if (screenshotUrl) {
+                    screenshotImg.src = screenshotUrl;
+                    screenshotImg.style.display = 'block';
+                    placeholderImg.style.display = 'none';
+                } else {
+                    screenshotImg.style.display = 'none';
+                    placeholderImg.style.display = 'flex';
+                    placeholderImg.innerHTML = `
+                        <span class="icon">🖼️</span>
+                        <span>Demo mode — add API key for real screenshots</span>
+                    `;
+                }
+
+                // Score cards
+                const scoreItems = [
+                    { key: 'alt', label: 'Alt Text', value: scores.alt },
+                    { key: 'product', label: 'Product SEO', value: scores.product },
+                    { key: 'performance', label: 'Performance', value: scores.performance },
+                    { key: 'mobile', label: 'Mobile Friendly', value: scores.mobile },
+                    { key: 'overall', label: 'Overall', value: scores.overall },
+                ];
+
+                scoreGrid.innerHTML = scoreItems.map(item => {
+                    const cls = getScoreClass(item.value);
+                    const label = getScoreLabel(item.value);
+                    const pct = Math.min(100, Math.max(0, item.value));
+                    return `
+                        <div class="score-item ${cls}">
+                            <div class="label">
+                                <span>${item.label}</span>
+                                <span class="badge">${label}</span>
+                            </div>
+                            <div class="value">${item.value}<span class="denom">/100</span></div>
+                            <div class="score-bar"><div class="fill" style="width:${pct}%;"></div></div>
+                            <div class="sub-text">${item.key === 'alt' ? 'Image alt text quality' :
+                                     item.key === 'product' ? 'Product page optimization' :
+                                     item.key === 'performance' ? 'Speed & loading' :
+                                     item.key === 'mobile' ? 'Mobile experience' :
+                                     'Overall health'}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Summary
+                summaryList.innerHTML = data.summaries.map(item => {
+                    const impactLabel = item.impact.charAt(0).toUpperCase() + item.impact.slice(1);
+                    return `
+                        <div class="summary-item">
+                            <div class="issue">${item.title}: ${item.issue}</div>
+                            <div class="explanation">${item.explanation}</div>
+                            <div class="impact">
+                                <span>Impact: <strong>${impactLabel}</strong></span>
+                                <span class="tag ${item.impact}">${item.impact}</span>
+                                <span style="margin-left:auto;font-size:13px;">Score: ${item.score}/100</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Recommendations
+                recList.innerHTML = data.recommendations.map((rec, idx) => `
+                    <div class="rec-item">
+                        <div class="num">${idx + 1}</div>
+                        <div class="content">
+                            <div class="title">${rec.title}</div>
+                            <div class="desc">${rec.desc}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Show dashboard
+                dashboard.classList.add('active');
+            }
+
+            // ----- Run audit -----
+            async function runAudit() {
+                let url = storeUrlInput.value.trim();
+                if (!url) {
+                    showToast('Please enter a Shopify store URL.', 'error');
+                    return;
+                }
+
+                // Clean URL
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+
+                // Validate it's a Shopify store (basic check)
+                if (!url.includes('myshopify.com') && !url.includes('shopify.com')) {
+                    showToast('Please enter a valid Shopify store URL (e.g., store.myshopify.com).', 'error');
+                    return;
+                }
+
+                // Save API key if provided
+                const key = apiKeyInput.value.trim();
+                if (key) saveApiKey(key);
+
+                // Show loading
+                loading.classList.add('active');
+                runBtn.disabled = true;
+
+                try {
+                    // Capture screenshot
+                    const screenshotUrl = await captureScreenshot(url);
+
+                    // Render dashboard
+                    renderDashboard(url, screenshotUrl);
+
+                    showToast('Audit complete!', 'success');
+                } catch (err) {
+                    console.error(err);
+                    showToast('Error running audit: ' + err.message, 'error');
+                } finally {
+                    loading.classList.remove('active');
+                    runBtn.disabled = false;
+                }
+            }
+
+            // ----- PDF export -----
+            async function exportPDF() {
+                if (!auditData) {
+                    showToast('Run an audit first before exporting.', 'error');
+                    return;
+                }
+
+                const btn = downloadBtn;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '⏳ Generating…';
+                btn.disabled = true;
+
+                try {
+                    const element = document.getElementById('dashboard');
+                    // Temporarily add a class for PDF styling
+                    element.classList.add('pdf-export');
+
+                    const canvas = await html2canvas(element, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#F5F7FC',
+                        logging: false,
+                        windowWidth: 1280,
+                    });
+
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+                    let heightLeft = pdfHeight;
+                    let position = 0;
+
+                    // Add first page
+                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                    heightLeft -= pdf.internal.pageSize.getHeight();
+
+                    while (heightLeft > 0) {
+                        position = heightLeft - pdfHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
+                        heightLeft -= pdf.internal.pageSize.getHeight();
+                    }
+
+                    const filename = `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+                    pdf.save(filename);
+
+                    element.classList.remove('pdf-export');
+                    showToast('PDF downloaded successfully!', 'success');
+                } catch (err) {
+                    console.error(err);
+                    showToast('Error generating PDF: ' + err.message, 'error');
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            // ----- Settings modal -----
+            function openSettings() {
+                // Load current values
+                const s = getScoresFromInputs();
+                scoreAlt.value = s.alt;
+                scoreProduct.value = s.product;
+                scorePerformance.value = s.performance;
+                scoreMobile.value = s.mobile;
+                updateOverallPreview();
+                settingsModal.classList.add('active');
+            }
+
+            function closeSettings() {
+                settingsModal.classList.remove('active');
+            }
+
+            // ----- Event listeners -----
+            runBtn.addEventListener('click', runAudit);
+
+            storeUrlInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') runAudit();
+            });
+
+            downloadBtn.addEventListener('click', exportPDF);
+
+            settingsToggle.addEventListener('click', openSettings);
+            modalClose.addEventListener('click', closeSettings);
+            modalSave.addEventListener('click', saveSettings);
+
+            // Close modal on backdrop click
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) closeSettings();
+            });
+
+            // Update overall preview when score inputs change
+            [scoreAlt, scoreProduct, scorePerformance, scoreMobile].forEach(input => {
+                input.addEventListener('input', updateOverallPreview);
+            });
+
+            // ----- Init -----
+            loadSettings();
+            // Show a welcome toast
+            setTimeout(() => {
+                showToast('Enter a Shopify URL and click "Run Audit" to get started.', 'info');
+            }, 600);
+
+            // Allow demo mode with a sample URL
+            storeUrlInput.value = 'example.myshopify.com';
+
+            console.log('Shopify SEO Audit Tool loaded.');
+            console.log('💡 Get a free ScreenshotOne API key at https://screenshotone.com/');
+            console.log('🔧 Customize scores in Settings.');
+
+        })();
+    </script>
+
+</body>
+</html>
