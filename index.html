@@ -328,6 +328,80 @@
             align-items: center;
             gap: 8px;
         }
+        .screenshot-card {
+            padding: 0;
+            overflow: hidden;
+        }
+        .screenshot-card .card-title {
+            padding: 20px 24px 0;
+        }
+        .screenshot-wrap {
+            position: relative;
+            width: 100%;
+            padding-top: 62.5%;
+            background: var(--bg);
+            overflow: hidden;
+            border-radius: 0 0 var(--radius) var(--radius);
+        }
+        .screenshot-wrap img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            transition: var(--transition);
+        }
+        .screenshot-wrap .placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            gap: 8px;
+            background: var(--bg);
+        }
+        .screenshot-wrap .placeholder .icon {
+            font-size: 40px;
+            opacity: 0.4;
+        }
+        .upload-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            margin-top: 8px;
+        }
+        .upload-btn:hover {
+            background: var(--primary-dark);
+        }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .upload-btn-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
         .score-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -641,23 +715,49 @@
         .toast.success {
             background: var(--score-high);
         }
-        /* PDF high quality */
-        .pdf-export {
-            background: white !important;
-            padding: 20px !important;
+        .screenshot-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
         }
-        .pdf-export .card {
-            box-shadow: none !important;
-            border: 1px solid #e5e7eb !important;
+        .screenshot-actions .hint {
+            font-size: 12px;
+            color: var(--text-muted);
         }
-        .pdf-export .screenshot-card,
-        .pdf-export .screenshot-wrap,
+        .remove-img-btn {
+            background: #EF4444;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+        }
+        .remove-img-btn:hover {
+            background: #DC2626;
+        }
+        /* PDF export - hide screenshot upload UI */
         .pdf-export .screenshot-actions,
         .pdf-export .upload-btn-wrapper,
         .pdf-export .upload-btn,
         .pdf-export .remove-img-btn,
-        .pdf-export .hint {
+        .pdf-export .hint,
+        .pdf-export .placeholder {
             display: none !important;
+        }
+        .pdf-export .screenshot-wrap img {
+            display: block !important;
+        }
+        .pdf-export .screenshot-card {
+            padding-bottom: 0 !important;
+        }
+        .pdf-export .screenshot-wrap {
+            border-radius: var(--radius) !important;
         }
         @media (max-width: 640px) {
             body {
@@ -713,6 +813,10 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+            .screenshot-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
@@ -758,6 +862,29 @@
 
             <div class="dashboard-grid">
                 <div class="col-left">
+                    <!-- SCREENSHOT SECTION - Visible in UI, hidden in PDF -->
+                    <div class="card screenshot-card" style="margin-bottom:28px;">
+                        <div class="card-title">📸 Homepage Screenshot</div>
+                        <div class="screenshot-wrap" id="screenshotWrap">
+                            <div class="placeholder" id="placeholderImg">
+                                <span class="icon">🖼️</span>
+                                <span>Upload a screenshot of the store homepage</span>
+                                <span style="font-size:12px;color:var(--text-muted);">Take a screenshot, then upload it here</span>
+                            </div>
+                            <img id="screenshotImg" style="display:none;" alt="Store screenshot" />
+                        </div>
+                        <div style="padding:16px 24px 20px;">
+                            <div class="screenshot-actions">
+                                <div class="upload-btn-wrapper">
+                                    <button class="upload-btn">📤 Upload Screenshot</button>
+                                    <input type="file" id="screenshotUpload" accept="image/*" />
+                                </div>
+                                <button class="remove-img-btn" id="removeScreenshot" style="display:none;">✕ Remove</button>
+                                <span class="hint">Upload PNG or JPG</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div class="card-title">📋 Audit Summary</div>
                         <div class="summary-list" id="summaryList"></div>
@@ -805,6 +932,10 @@
             const reportUrl = document.getElementById('reportUrl');
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
+            const screenshotImg = document.getElementById('screenshotImg');
+            const placeholderImg = document.getElementById('placeholderImg');
+            const screenshotUpload = document.getElementById('screenshotUpload');
+            const removeScreenshotBtn = document.getElementById('removeScreenshot');
             const scoreGrid = document.getElementById('scoreGrid');
             const summaryList = document.getElementById('summaryList');
             const recList = document.getElementById('recList');
@@ -823,6 +954,7 @@
             let currentScores = { alt: 10, product: 18, performance: 15, mobile: 22, overall: 0 };
             let auditData = null;
             let toastTimer = null;
+            let uploadedImageData = null;
 
             function showToast(msg, type = 'info') {
                 if (toastTimer) clearTimeout(toastTimer);
@@ -887,6 +1019,34 @@
                 settingsModal.classList.remove('active');
                 if (auditData) renderDashboard(auditData.url);
             }
+
+            // Handle screenshot upload
+            screenshotUpload.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageData = event.target.result;
+                    uploadedImageData = imageData;
+                    screenshotImg.src = imageData;
+                    screenshotImg.style.display = 'block';
+                    placeholderImg.style.display = 'none';
+                    removeScreenshotBtn.style.display = 'inline-block';
+                    showToast('✅ Screenshot uploaded!', 'success');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Remove screenshot
+            removeScreenshotBtn.addEventListener('click', function() {
+                screenshotImg.style.display = 'none';
+                placeholderImg.style.display = 'flex';
+                removeScreenshotBtn.style.display = 'none';
+                uploadedImageData = null;
+                screenshotUpload.value = '';
+                showToast('Screenshot removed', 'info');
+            });
 
             function generateAuditData(storeUrl, scores) {
                 const url = storeUrl.startsWith('http') ? storeUrl : 'https://' + storeUrl;
@@ -1023,7 +1183,7 @@
 
                 try {
                     renderDashboard(url);
-                    showToast('✅ Audit generated successfully!', 'success');
+                    showToast('✅ Audit generated! Upload a screenshot to complete the report.', 'success');
                 } catch (err) {
                     showToast('Error: ' + err.message, 'error');
                 } finally {
@@ -1034,6 +1194,11 @@
 
             async function exportPDF() {
                 if (!auditData) { showToast('Generate an audit first.', 'error'); return; }
+
+                if (!uploadedImageData) {
+                    showToast('⚠️ Please upload a screenshot before downloading the PDF.', 'error');
+                    return;
+                }
 
                 const btn = downloadBtn;
                 const originalText = btn.innerHTML;
@@ -1053,13 +1218,15 @@
                         width: 1280,
                         height: element.scrollHeight,
                         onclone: function(clonedDoc) {
-                            const clonedElement = clonedDoc.getElementById('dashboard');
-                            if (clonedElement) {
-                                clonedElement.style.display = 'block';
+                            // Ensure screenshot is visible in PDF
+                            const clonedImg = clonedDoc.getElementById('screenshotImg');
+                            if (clonedImg) {
+                                clonedImg.style.display = 'block';
                             }
-                            // Remove any screenshot-related elements
-                            const screenshotCards = clonedDoc.querySelectorAll('.screenshot-card, .screenshot-actions, .upload-btn-wrapper, .upload-btn, .remove-img-btn, .hint');
-                            screenshotCards.forEach(el => el.style.display = 'none');
+                            const clonedPlaceholder = clonedDoc.getElementById('placeholderImg');
+                            if (clonedPlaceholder) {
+                                clonedPlaceholder.style.display = 'none';
+                            }
                         }
                     });
 
@@ -1109,8 +1276,8 @@
             });
 
             loadSettings();
-            showToast('🚀 Enter a Shopify URL and click "Generate Audit"', 'info');
-            console.log('✅ Shopify SEO Audit Tool loaded - Clean PDFs!');
+            showToast('📸 Enter a URL, generate audit, then upload screenshot!', 'info');
+            console.log('✅ Shopify SEO Audit Tool loaded - Screenshot upload visible in UI, hidden in PDF');
         })();
     </script>
 </body>
