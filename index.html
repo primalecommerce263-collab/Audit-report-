@@ -29,7 +29,6 @@
             --score-high: #10B981;
             --score-unknown: #94A3B8;
         }
-
         *,
         *::before,
         *::after {
@@ -37,7 +36,6 @@
             margin: 0;
             padding: 0;
         }
-
         body {
             font-family: var(--font);
             background: var(--bg);
@@ -49,13 +47,11 @@
             flex-direction: column;
             align-items: center;
         }
-
         .app-container {
             max-width: 1280px;
             width: 100%;
             margin: 0 auto;
         }
-
         .app-header {
             display: flex;
             align-items: center;
@@ -66,13 +62,11 @@
             border-bottom: 1px solid var(--border);
             margin-bottom: 32px;
         }
-
         .brand {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .brand-icon {
             width: 44px;
             height: 44px;
@@ -86,7 +80,6 @@
             font-size: 20px;
             letter-spacing: -0.5px;
         }
-
         .brand h1 {
             font-size: 24px;
             font-weight: 700;
@@ -96,20 +89,17 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
         .brand span {
             font-size: 14px;
             color: var(--text-muted);
             font-weight: 400;
             -webkit-text-fill-color: var(--text-muted);
         }
-
         .header-actions {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .btn-settings {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -124,12 +114,10 @@
             align-items: center;
             gap: 6px;
         }
-
         .btn-settings:hover {
             border-color: var(--primary);
             color: var(--primary);
         }
-
         .input-section {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -138,26 +126,22 @@
             margin-bottom: 32px;
             border: 1px solid var(--border);
         }
-
         .input-section .subtitle {
             font-size: 14px;
             color: var(--text-muted);
             margin-bottom: 18px;
         }
-
         .input-row {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             align-items: center;
         }
-
         .input-row .url-input-wrap {
             flex: 1;
             min-width: 240px;
             position: relative;
         }
-
         .input-row .url-input-wrap .prefix {
             position: absolute;
             left: 14px;
@@ -168,7 +152,6 @@
             font-weight: 500;
             pointer-events: none;
         }
-
         .input-row input[type="text"] {
             width: 100%;
             padding: 14px 14px 14px 72px;
@@ -181,13 +164,11 @@
             color: var(--text);
             outline: none;
         }
-
         .input-row input[type="text"]:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(108, 60, 225, 0.12);
             background: #fff;
         }
-
         .btn-primary {
             background: var(--primary);
             color: #fff;
@@ -204,20 +185,17 @@
             align-items: center;
             gap: 8px;
         }
-
         .btn-primary:hover {
             background: var(--primary-dark);
             transform: translateY(-1px);
             box-shadow: 0 8px 24px rgba(108, 60, 225, 0.30);
         }
-
         .btn-primary:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-
         .loading-overlay {
             display: none;
             align-items: center;
@@ -227,11 +205,9 @@
             color: var(--text-muted);
             font-size: 15px;
         }
-
         .loading-overlay.active {
             display: flex;
         }
-
         .spinner {
             width: 28px;
             height: 28px;
@@ -240,22 +216,18 @@
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-
         @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
-
         .dashboard {
             display: none;
             animation: fadeUp 0.5s ease;
         }
-
         .dashboard.active {
             display: block;
         }
-
         @keyframes fadeUp {
             from {
                 opacity: 0;
@@ -266,7 +238,6 @@
                 transform: translateY(0);
             }
         }
-
         .store-header {
             display: flex;
             flex-wrap: wrap;
@@ -280,14 +251,12 @@
             border: 1px solid var(--border);
             margin-bottom: 28px;
         }
-
         .store-header .store-info {
             display: flex;
             align-items: center;
             gap: 14px;
             flex-wrap: wrap;
         }
-
         .store-header .store-info .url-badge {
             background: var(--bg);
             padding: 6px 16px;
@@ -297,7 +266,6 @@
             color: var(--text);
             word-break: break-all;
         }
-
         .store-header .store-info .status {
             font-size: 13px;
             color: var(--text-muted);
@@ -305,14 +273,12 @@
             align-items: center;
             gap: 6px;
         }
-
         .store-header .store-info .status .dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             display: inline-block;
         }
-
         .store-header .store-info .status .dot.green {
             background: var(--score-high);
         }
@@ -322,7 +288,6 @@
         .store-header .store-info .status .dot.red {
             background: var(--score-low);
         }
-
         .store-header .download-btn {
             background: var(--primary);
             color: #fff;
@@ -338,26 +303,22 @@
             align-items: center;
             gap: 8px;
         }
-
         .store-header .download-btn:hover {
             background: var(--primary-dark);
             transform: translateY(-1px);
             box-shadow: 0 6px 20px rgba(108, 60, 225, 0.25);
         }
-
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 28px;
             margin-bottom: 28px;
         }
-
         @media (max-width: 900px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
         }
-
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -366,11 +327,9 @@
             border: 1px solid var(--border);
             transition: var(--transition);
         }
-
         .card:hover {
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.06);
         }
-
         .card-title {
             font-size: 14px;
             font-weight: 600;
@@ -382,16 +341,13 @@
             align-items: center;
             gap: 8px;
         }
-
         .screenshot-card {
             padding: 0;
             overflow: hidden;
         }
-
         .screenshot-card .card-title {
             padding: 20px 24px 0;
         }
-
         .screenshot-wrap {
             position: relative;
             width: 100%;
@@ -399,7 +355,6 @@
             background: var(--bg);
             overflow: hidden;
         }
-
         .screenshot-wrap img {
             position: absolute;
             top: 0;
@@ -410,7 +365,6 @@
             object-position: top;
             transition: var(--transition);
         }
-
         .screenshot-wrap .placeholder {
             position: absolute;
             top: 0;
@@ -426,31 +380,26 @@
             gap: 8px;
             background: var(--bg);
         }
-
         .screenshot-wrap .placeholder .icon {
             font-size: 40px;
             opacity: 0.4;
         }
-
         .score-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 16px;
         }
-
         @media (max-width: 500px) {
             .score-grid {
                 grid-template-columns: 1fr;
             }
         }
-
         .score-item {
             background: var(--bg);
             border-radius: var(--radius-sm);
             padding: 16px 18px;
             transition: var(--transition);
         }
-
         .score-item .label {
             font-size: 13px;
             font-weight: 500;
@@ -460,7 +409,6 @@
             align-items: center;
             margin-bottom: 6px;
         }
-
         .score-item .label .badge {
             font-size: 11px;
             font-weight: 600;
@@ -469,20 +417,17 @@
             background: var(--border);
             color: var(--text-muted);
         }
-
         .score-item .value {
             font-size: 32px;
             font-weight: 700;
             letter-spacing: -1px;
             line-height: 1.2;
         }
-
         .score-item .value .denom {
             font-size: 18px;
             font-weight: 400;
             color: var(--text-muted);
         }
-
         .score-bar {
             width: 100%;
             height: 6px;
@@ -491,20 +436,17 @@
             margin-top: 8px;
             overflow: hidden;
         }
-
         .score-bar .fill {
             height: 100%;
             border-radius: 4px;
             transition: width 0.8s ease;
             width: 0%;
         }
-
         .score-item .sub-text {
             font-size: 12px;
             color: var(--text-muted);
             margin-top: 6px;
         }
-
         .score-low .value {
             color: var(--score-low);
         }
@@ -529,32 +471,27 @@
         .score-unknown .fill {
             background: var(--score-unknown);
         }
-
         .summary-list {
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
-
         .summary-item {
             padding: 14px 16px;
             background: var(--bg);
             border-radius: var(--radius-sm);
             border-left: 4px solid var(--primary);
         }
-
         .summary-item .issue {
             font-weight: 600;
             font-size: 15px;
             margin-bottom: 4px;
         }
-
         .summary-item .explanation {
             font-size: 14px;
             color: var(--text-muted);
             line-height: 1.5;
         }
-
         .summary-item .impact {
             font-size: 13px;
             color: var(--text-muted);
@@ -563,7 +500,6 @@
             align-items: center;
             gap: 6px;
         }
-
         .summary-item .impact .tag {
             font-size: 11px;
             font-weight: 600;
@@ -572,7 +508,6 @@
             background: var(--border);
             color: var(--text-muted);
         }
-
         .summary-item .impact .tag.high {
             background: #FEE2E2;
             color: var(--score-low);
@@ -585,13 +520,11 @@
             background: #D1FAE5;
             color: var(--score-high);
         }
-
         .rec-list {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
-
         .rec-item {
             display: flex;
             align-items: flex-start;
@@ -601,7 +534,6 @@
             border-radius: var(--radius-sm);
             transition: var(--transition);
         }
-
         .rec-item .num {
             width: 26px;
             height: 26px;
@@ -616,22 +548,18 @@
             flex-shrink: 0;
             margin-top: 1px;
         }
-
         .rec-item .content {
             flex: 1;
         }
-
         .rec-item .content .title {
             font-weight: 600;
             font-size: 15px;
         }
-
         .rec-item .content .desc {
             font-size: 14px;
             color: var(--text-muted);
             margin-top: 2px;
         }
-
         .modal-overlay {
             display: none;
             position: fixed;
@@ -646,11 +574,9 @@
             justify-content: center;
             padding: 20px;
         }
-
         .modal-overlay.active {
             display: flex;
         }
-
         .modal {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -662,30 +588,25 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-
         .modal h2 {
             font-size: 22px;
             font-weight: 700;
             margin-bottom: 8px;
         }
-
         .modal .modal-sub {
             color: var(--text-muted);
             font-size: 14px;
             margin-bottom: 24px;
         }
-
         .modal .field {
             margin-bottom: 18px;
         }
-
         .modal .field label {
             display: block;
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 4px;
         }
-
         .modal .field input[type="number"] {
             width: 100%;
             padding: 10px 14px;
@@ -698,30 +619,25 @@
             color: var(--text);
             outline: none;
         }
-
         .modal .field input:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(108, 60, 225, 0.10);
             background: #fff;
         }
-
         .modal .field .score-row {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
         }
-
         .modal .field .score-row input {
             text-align: center;
         }
-
         .modal .modal-actions {
             display: flex;
             gap: 12px;
             margin-top: 24px;
             justify-content: flex-end;
         }
-
         .modal .modal-actions .btn-close {
             background: var(--bg);
             border: 1px solid var(--border);
@@ -733,12 +649,10 @@
             font-family: var(--font);
             transition: var(--transition);
         }
-
         .modal .modal-actions .btn-close:hover {
             background: var(--card-bg);
             border-color: var(--text-muted);
         }
-
         .modal .modal-actions .btn-save {
             background: var(--primary);
             color: #fff;
@@ -751,11 +665,9 @@
             cursor: pointer;
             transition: var(--transition);
         }
-
         .modal .modal-actions .btn-save:hover {
             background: var(--primary-dark);
         }
-
         .app-footer {
             margin-top: 48px;
             padding: 20px 0 10px;
@@ -764,7 +676,6 @@
             font-size: 13px;
             color: var(--text-muted);
         }
-
         @media (max-width: 640px) {
             body {
                 padding: 12px;
@@ -827,7 +738,6 @@
                 justify-content: center;
             }
         }
-
         @media (max-width: 400px) {
             .score-grid {
                 grid-template-columns: 1fr;
@@ -836,7 +746,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
         .toast {
             position: fixed;
             bottom: 30px;
@@ -854,19 +763,16 @@
             z-index: 2000;
             max-width: 400px;
         }
-
         .toast.show {
             transform: translateY(0);
             opacity: 1;
         }
-
         .toast.error {
             background: var(--score-low);
         }
         .toast.success {
             background: var(--score-high);
         }
-
         .api-key-inline {
             display: flex;
             align-items: center;
@@ -878,13 +784,11 @@
             border-radius: var(--radius-sm);
             border: 1px solid var(--border);
         }
-
         .api-key-inline label {
             font-size: 13px;
             font-weight: 500;
             color: var(--text-muted);
         }
-
         .api-key-inline input {
             flex: 1;
             min-width: 160px;
@@ -897,25 +801,20 @@
             outline: none;
             transition: var(--transition);
         }
-
         .api-key-inline input:focus {
             border-color: var(--primary);
         }
-
         .api-key-inline .hint-text {
             font-size: 12px;
             color: var(--text-muted);
         }
-
         .api-key-inline .hint-text a {
             color: var(--primary);
             text-decoration: none;
         }
-
         .api-key-inline .hint-text a:hover {
             text-decoration: underline;
         }
-
         .screenshot-error {
             position: absolute;
             top: 0;
@@ -940,7 +839,6 @@
             max-width: 300px;
             color: var(--text);
         }
-
         .api-status {
             font-size: 12px;
             padding: 4px 12px;
@@ -949,7 +847,6 @@
             color: var(--text-muted);
             margin-left: 8px;
         }
-
         .api-status.active {
             background: #D1FAE5;
             color: var(--score-high);
@@ -957,9 +854,7 @@
     </style>
 </head>
 <body>
-
     <div class="app-container" id="app">
-
         <header class="app-header">
             <div class="brand">
                 <div class="brand-icon">SEO</div>
@@ -969,66 +864,43 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button class="btn-settings" id="settingsToggle" aria-label="Settings">
-                    ⚙️ Settings
-                </button>
+                <button class="btn-settings" id="settingsToggle">⚙️ Settings</button>
             </div>
         </header>
-
-        <section class="input-section" id="inputSection">
+        <section class="input-section">
             <p class="subtitle">Enter any Shopify store URL to generate a custom SEO audit report.</p>
             <div class="input-row">
                 <div class="url-input-wrap">
                     <span class="prefix">https://</span>
                     <input type="text" id="storeUrl" placeholder="your-store.myshopify.com" value="gymshark.myshopify.com" />
                 </div>
-                <button class="btn-primary" id="runAuditBtn">
-                    <span>▶</span> Run Audit
-                </button>
+                <button class="btn-primary" id="runAuditBtn"><span>▶</span> Run Audit</button>
             </div>
-
             <div class="api-key-inline">
                 <label for="apiKeyInput">🔑 ScreenshotLayer API Key</label>
-                <input type="text" id="apiKeyInput" placeholder="Enter your ScreenshotLayer API key" value="9b803d5ec2a1e1bd7c7a3bbff23c752e" />
-                <span class="hint-text">
-                    <a href="https://screenshotlayer.com/" target="_blank">Get free key</a>
-                    &nbsp;·&nbsp; <span id="apiStatus" class="api-status active">✓ Key loaded</span>
-                </span>
+                <input type="text" id="apiKeyInput" placeholder="Enter your API key" value="9b803d5ec2a1e1bd7c7a3bbff23c752e" />
+                <span class="hint-text">Get free key at <a href="https://screenshotlayer.com/" target="_blank">screenshotlayer.com</a></span>
             </div>
-
             <div class="loading-overlay" id="loadingOverlay">
                 <div class="spinner"></div>
                 <span>Auditing store… capturing screenshot &amp; analyzing SEO signals</span>
             </div>
         </section>
-
         <div class="dashboard" id="dashboard">
-
-            <div class="store-header" id="storeHeader">
+            <div class="store-header">
                 <div class="store-info">
                     <span style="font-weight:600;font-size:15px;">📊 Audit Report</span>
                     <span class="url-badge" id="reportUrl">—</span>
-                    <span class="status">
-                        <span class="dot green" id="statusDot"></span>
-                        <span id="statusText">Ready</span>
-                    </span>
+                    <span class="status"><span class="dot green" id="statusDot"></span><span id="statusText">Ready</span></span>
                 </div>
-                <button class="download-btn" id="downloadPdfBtn">
-                    📄 Download PDF Report
-                </button>
+                <button class="download-btn" id="downloadPdfBtn">📄 Download PDF Report</button>
             </div>
-
             <div class="dashboard-grid">
-
                 <div class="col-left">
-
                     <div class="card screenshot-card" style="margin-bottom:28px;">
                         <div class="card-title">📸 Homepage Preview</div>
                         <div class="screenshot-wrap" id="screenshotWrap">
-                            <div class="placeholder" id="placeholderImg">
-                                <span class="icon">🖼️</span>
-                                <span>Screenshot will appear here</span>
-                            </div>
+                            <div class="placeholder" id="placeholderImg"><span class="icon">🖼️</span><span>Screenshot will appear here</span></div>
                             <img id="screenshotImg" style="display:none;" alt="Store homepage screenshot" />
                             <div class="screenshot-error" id="screenshotError" style="display:none;">
                                 <div class="icon">⚠️</div>
@@ -1036,105 +908,43 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="card">
                         <div class="card-title">📋 Audit Summary</div>
-                        <div class="summary-list" id="summaryList">
-                            <!-- populated by JS -->
-                        </div>
+                        <div class="summary-list" id="summaryList"></div>
                     </div>
-
                 </div>
-
                 <div class="col-right">
-
                     <div class="card" style="margin-bottom:28px;">
                         <div class="card-title">🎯 SEO Scores</div>
-                        <div class="score-grid" id="scoreGrid">
-                            <!-- populated by JS -->
-                        </div>
+                        <div class="score-grid" id="scoreGrid"></div>
                     </div>
-
                     <div class="card">
                         <div class="card-title">💡 Top Recommendations</div>
-                        <div class="rec-list" id="recList">
-                            <!-- populated by JS -->
-                        </div>
+                        <div class="rec-list" id="recList"></div>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
         <footer class="app-footer">
             <p>Shopify SEO Audit Tool &bull; Built for store owners &amp; agencies &bull; Scores are custom, not Google's</p>
         </footer>
     </div>
-
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <h2>⚙️ Customize Scores</h2>
-            <p class="modal-sub">Adjust the scoring thresholds and weightings for your audit. Changes apply to the next audit.</p>
-
-            <div class="field">
-                <label>Alt Text Score <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
-                <div class="score-row">
-                    <input type="number" id="scoreAlt" value="10" min="0" max="100" />
-                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
-                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Product SEO <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
-                <div class="score-row">
-                    <input type="number" id="scoreProduct" value="18" min="0" max="100" />
-                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
-                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Performance <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
-                <div class="score-row">
-                    <input type="number" id="scorePerformance" value="15" min="0" max="100" />
-                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
-                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Mobile Friendly <span style="font-weight:400;color:var(--text-muted);">(max 100)</span></label>
-                <div class="score-row">
-                    <input type="number" id="scoreMobile" value="22" min="0" max="100" />
-                    <span style="display:flex;align-items:center;color:var(--text-muted);font-size:14px;">/ 100</span>
-                    <span style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);">(low = bad)</span>
-                </div>
-            </div>
-
-            <div class="field">
-                <label>Overall Score <span style="font-weight:400;color:var(--text-muted);">(auto-calculated)</span></label>
-                <div style="font-size:28px;font-weight:700;color:var(--primary);" id="overallPreview">—</div>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-close" id="modalClose">Cancel</button>
-                <button class="btn-save" id="modalSave">Save Settings</button>
-            </div>
+            <p class="modal-sub">Adjust scoring thresholds for your audit.</p>
+            <div class="field"><label>Alt Text Score</label><div class="score-row"><input type="number" id="scoreAlt" value="10" min="0" max="100" /><span>/ 100</span></div></div>
+            <div class="field"><label>Product SEO</label><div class="score-row"><input type="number" id="scoreProduct" value="18" min="0" max="100" /><span>/ 100</span></div></div>
+            <div class="field"><label>Performance</label><div class="score-row"><input type="number" id="scorePerformance" value="15" min="0" max="100" /><span>/ 100</span></div></div>
+            <div class="field"><label>Mobile Friendly</label><div class="score-row"><input type="number" id="scoreMobile" value="22" min="0" max="100" /><span>/ 100</span></div></div>
+            <div class="field"><label>Overall Score</label><div style="font-size:28px;font-weight:700;color:var(--primary);" id="overallPreview">—</div></div>
+            <div class="modal-actions"><button class="btn-close" id="modalClose">Cancel</button><button class="btn-save" id="modalSave">Save Settings</button></div>
         </div>
     </div>
-
     <div class="toast" id="toast"></div>
-
     <script>
         (function() {
-            'use strict';
-
             const YOUR_API_KEY = '9b803d5ec2a1e1bd7c7a3bbff23c752e';
-
-            // DOM refs
             const storeUrlInput = document.getElementById('storeUrl');
             const apiKeyInput = document.getElementById('apiKeyInput');
             const runBtn = document.getElementById('runAuditBtn');
@@ -1157,16 +967,15 @@
             const modalSave = document.getElementById('modalSave');
             const overallPreview = document.getElementById('overallPreview');
             const toast = document.getElementById('toast');
-
             const scoreAlt = document.getElementById('scoreAlt');
             const scoreProduct = document.getElementById('scoreProduct');
             const scorePerformance = document.getElementById('scorePerformance');
             const scoreMobile = document.getElementById('scoreMobile');
-
+            
             let currentScores = { alt: 10, product: 18, performance: 15, mobile: 22, overall: 0 };
             let auditData = null;
             let toastTimer = null;
-
+            
             apiKeyInput.value = YOUR_API_KEY;
 
             function showToast(msg, type = 'info') {
@@ -1175,21 +984,13 @@
                 toast.className = 'toast ' + type;
                 void toast.offsetWidth;
                 toast.classList.add('show');
-                toastTimer = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 4000);
+                toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 4000);
             }
 
             function getApiKey() {
                 const inputKey = apiKeyInput.value.trim();
                 if (inputKey) return inputKey;
-                if (YOUR_API_KEY) return YOUR_API_KEY;
                 return localStorage.getItem('shopifyAudit_apiKey') || '';
-            }
-
-            function saveApiKey(key) {
-                if (key) localStorage.setItem('shopifyAudit_apiKey', key);
-                else localStorage.removeItem('shopifyAudit_apiKey');
             }
 
             function getScoresFromInputs() {
@@ -1231,132 +1032,48 @@
                         updateOverallPreview();
                     } catch (_) {}
                 }
-                if (!localStorage.getItem('shopifyAudit_apiKey') && YOUR_API_KEY) {
-                    localStorage.setItem('shopifyAudit_apiKey', YOUR_API_KEY);
-                }
-                const key = localStorage.getItem('shopifyAudit_apiKey');
-                if (key && !apiKeyInput.value) {
-                    apiKeyInput.value = key;
-                }
             }
 
             function saveSettings() {
                 const s = getScoresFromInputs();
-                localStorage.setItem('shopifyAudit_scores', JSON.stringify({
-                    alt: s.alt,
-                    product: s.product,
-                    performance: s.performance,
-                    mobile: s.mobile,
-                }));
+                localStorage.setItem('shopifyAudit_scores', JSON.stringify({ alt: s.alt, product: s.product, performance: s.performance, mobile: s.mobile }));
                 currentScores = s;
-                const key = getApiKey();
-                if (key) saveApiKey(key);
                 showToast('Settings saved!', 'success');
                 settingsModal.classList.remove('active');
-                if (auditData) {
-                    renderDashboard(auditData.url, auditData.screenshotUrl);
-                }
+                if (auditData) renderDashboard(auditData.url, auditData.screenshotUrl);
             }
 
-            // ----- FIXED: Screenshot capture with CORS proxy -----
             async function captureScreenshot(url) {
                 const apiKey = getApiKey();
-
-                if (!apiKey) {
-                    return null;
-                }
+                if (!apiKey) return null;
 
                 let cleanUrl = url.trim();
                 if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
                     cleanUrl = 'https://' + cleanUrl;
                 }
 
-                // Use a CORS proxy to avoid "Failed to fetch" error
                 const corsProxy = 'https://api.allorigins.win/raw?url=';
-                const screenshotApiUrl =
-                    `http://api.screenshotlayer.com/api/capture?access_key=${apiKey}&url=${encodeURIComponent(cleanUrl)}&viewport=1280x800&width=1280&height=800&fullpage=1&format=PNG&wait_for=3000&timeout=30000`;
-
-                // If you have your own server, you can use this instead:
-                // const proxyUrl = `https://cors-anywhere.herokuapp.com/${screenshotApiUrl}`;
-                // But allorigins.win is more reliable
-
+                const screenshotApiUrl = `http://api.screenshotlayer.com/api/capture?access_key=${apiKey}&url=${encodeURIComponent(cleanUrl)}&viewport=1280x800&width=1280&height=800&fullpage=1&format=PNG&wait_for=3000&timeout=30000`;
                 const proxyUrl = `${corsProxy}${encodeURIComponent(screenshotApiUrl)}`;
 
-                console.log('Requesting screenshot via proxy...');
-
                 try {
-                    const response = await fetch(proxyUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'image/png, image/*',
-                        },
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-
-                    // Check if we got an image or an error
+                    const response = await fetch(proxyUrl);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    
                     const contentType = response.headers.get('content-type') || '';
-
-                    if (contentType.includes('application/json')) {
-                        const json = await response.json();
-                        console.error('API Error:', json);
-                        if (json.error) {
-                            throw new Error(json.error.info || json.error);
-                        }
-                        throw new Error('Unknown API error');
-                    }
-
                     if (!contentType.includes('image')) {
                         const text = await response.text();
                         try {
                             const json = JSON.parse(text);
-                            if (json.error) {
-                                throw new Error(json.error.info || json.error);
-                            }
-                        } catch (_) {
-                            // If it's not JSON, it might be HTML error page
-                            if (text.includes('invalid') || text.includes('error')) {
-                                throw new Error('Invalid API response. Please check your API key.');
-                            }
-                        }
-                        throw new Error('API did not return an image. Your free tier may have expired.');
+                            if (json.error) throw new Error(json.error.info || json.error);
+                        } catch (_) {}
+                        throw new Error('API did not return an image');
                     }
 
                     const blob = await response.blob();
-
-                    if (!blob || blob.size === 0) {
-                        throw new Error('Received empty image from API');
-                    }
-
+                    if (!blob || blob.size === 0) throw new Error('Received empty image');
                     return URL.createObjectURL(blob);
                 } catch (err) {
-                    console.error('Screenshot capture failed:', err);
-
-                    // Try alternative proxy if first one fails
-                    if (err.message.includes('empty image') || err.message.includes('invalid')) {
-                        // Try without proxy (direct)
-                        try {
-                            console.log('Trying direct request...');
-                            const directResponse = await fetch(screenshotApiUrl, {
-                                method: 'GET',
-                                headers: {
-                                    'Accept': 'image/png, image/*',
-                                },
-                            });
-
-                            if (directResponse.ok) {
-                                const blob = await directResponse.blob();
-                                if (blob && blob.size > 0 && blob.type.includes('image')) {
-                                    return URL.createObjectURL(blob);
-                                }
-                            }
-                        } catch (directErr) {
-                            console.warn('Direct request also failed:', directErr);
-                        }
-                    }
-
                     throw err;
                 }
             }
@@ -1369,67 +1086,56 @@
                 const altScore = scores.alt;
                 summaries.push({
                     title: 'Alt Text Quality',
-                    issue: altScore < 50 ? 'Missing or poorly written alt text on product images.' :
-                        'Alt text is present but could be more descriptive.',
+                    issue: altScore < 50 ? 'Missing or poorly written alt text on product images.' : 'Alt text is present but could be more descriptive.',
                     explanation: 'Makes it harder for Google to understand product images, reducing visibility in search results and Google Images.',
                     impact: altScore < 30 ? 'high' : altScore < 60 ? 'medium' : 'low',
                     score: altScore,
                 });
-                recs.push({ title: 'Improve Image Alt Text',
-                    desc: 'Write descriptive alt text for every product image that includes relevant keywords and describes the product.' });
+                recs.push({ title: 'Improve Image Alt Text', desc: 'Write descriptive alt text for every product image that includes relevant keywords.' });
 
                 const prodScore = scores.product;
                 summaries.push({
                     title: 'Product Page SEO',
-                    issue: prodScore < 50 ? 'Product titles, descriptions, or meta tags are under-optimized.' :
-                        'Product pages could benefit from richer SEO content.',
+                    issue: prodScore < 50 ? 'Product titles, descriptions, or meta tags are under-optimized.' : 'Product pages could benefit from richer SEO content.',
                     explanation: 'Weak product SEO means lower rankings for product-specific searches, missing high-intent buyers.',
                     impact: prodScore < 30 ? 'high' : prodScore < 60 ? 'medium' : 'low',
                     score: prodScore,
                 });
-                recs.push({ title: 'Optimize Product Pages',
-                    desc: 'Optimize product titles with primary keywords, write unique descriptions (200+ words), and use structured data.' });
+                recs.push({ title: 'Optimize Product Pages', desc: 'Optimize product titles with primary keywords, write unique descriptions (200+ words), and use structured data.' });
 
                 const perfScore = scores.performance;
                 summaries.push({
                     title: 'Performance',
-                    issue: perfScore < 50 ? 'Page load speed is slow, hurting user experience.' :
-                        'Performance could be improved with image optimization and caching.',
+                    issue: perfScore < 50 ? 'Page load speed is slow, hurting user experience.' : 'Performance could be improved with image optimization and caching.',
                     explanation: 'Slow pages increase bounce rates and reduce conversions, especially on mobile devices.',
                     impact: perfScore < 30 ? 'high' : perfScore < 60 ? 'medium' : 'low',
                     score: perfScore,
                 });
-                recs.push({ title: 'Boost Page Speed',
-                    desc: 'Compress images, enable browser caching, minify CSS/JS, and use a CDN.' });
+                recs.push({ title: 'Boost Page Speed', desc: 'Compress images, enable browser caching, minify CSS/JS, and use a CDN.' });
 
                 const mobScore = scores.mobile;
                 summaries.push({
                     title: 'Mobile Friendliness',
-                    issue: mobScore < 50 ? 'Store is not fully optimized for mobile devices.' :
-                        'Mobile experience could be enhanced for better usability.',
+                    issue: mobScore < 50 ? 'Store is not fully optimized for mobile devices.' : 'Mobile experience could be enhanced for better usability.',
                     explanation: 'Over 60% of Shopify traffic comes from mobile. Poor mobile experience loses buyers.',
                     impact: mobScore < 30 ? 'high' : mobScore < 60 ? 'medium' : 'low',
                     score: mobScore,
                 });
-                recs.push({ title: 'Enhance Mobile Experience',
-                    desc: 'Use a responsive theme, ensure touch targets are large, and simplify mobile navigation.' });
+                recs.push({ title: 'Enhance Mobile Experience', desc: 'Use a responsive theme, ensure touch targets are large, and simplify mobile navigation.' });
 
                 const overall = scores.overall;
                 summaries.unshift({
                     title: 'Overall SEO Health',
-                    issue: overall < 50 ? 'Multiple critical SEO issues are hurting your store\'s visibility.' :
-                        'Your store has some SEO gaps that need attention.',
+                    issue: overall < 50 ? 'Multiple critical SEO issues are hurting your store\'s visibility.' : 'Your store has some SEO gaps that need attention.',
                     explanation: 'Poor SEO means fewer buyers find your store, leading to lost sales and lower revenue.',
                     impact: overall < 30 ? 'high' : overall < 60 ? 'medium' : 'low',
                     score: overall,
                 });
-                recs.unshift({ title: 'Audit Summary',
-                    desc: 'Prioritize the recommendations above to improve your store\'s discoverability.' });
+                recs.unshift({ title: 'Audit Summary', desc: 'Prioritize the recommendations above to improve your store\'s discoverability.' });
 
                 const impactOrder = { high: 0, medium: 1, low: 2 };
                 summaries.sort((a, b) => impactOrder[a.impact] - impactOrder[b.impact]);
-
-                return { url, scores, summaries, recommendations: recs, timestamp: new Date().toLocaleString() };
+                return { url, scores, summaries, recommendations: recs };
             }
 
             function renderDashboard(storeUrl, screenshotUrl) {
@@ -1439,18 +1145,11 @@
                 auditData.screenshotUrl = screenshotUrl;
 
                 reportUrl.textContent = data.url;
-
                 const overall = scores.overall;
-                if (overall >= 70) {
-                    statusDot.className = 'dot green';
-                    statusText.textContent = 'Good shape';
-                } else if (overall >= 40) {
-                    statusDot.className = 'dot yellow';
-                    statusText.textContent = 'Needs improvement';
-                } else {
-                    statusDot.className = 'dot red';
-                    statusText.textContent = 'Critical issues';
-                }
+                if (overall >= 70) { statusDot.className = 'dot green';
+                    statusText.textContent = 'Good shape'; } else if (overall >= 40) { statusDot.className = 'dot yellow';
+                    statusText.textContent = 'Needs improvement'; } else { statusDot.className = 'dot red';
+                    statusText.textContent = 'Critical issues'; }
 
                 if (screenshotUrl) {
                     screenshotImg.src = screenshotUrl;
@@ -1459,20 +1158,9 @@
                     screenshotError.style.display = 'none';
                 } else {
                     screenshotImg.style.display = 'none';
-                    const hasKey = getApiKey();
-                    if (hasKey) {
-                        placeholderImg.style.display = 'none';
-                        screenshotError.style.display = 'flex';
-                        errorText.textContent = 'Could not capture screenshot. Your API key might have expired or you\'ve used all free screenshots.';
-                    } else {
-                        placeholderImg.style.display = 'flex';
-                        screenshotError.style.display = 'none';
-                        placeholderImg.innerHTML =
-                        `
-                            <span class="icon">🖼️</span>
-                            <span>Add a ScreenshotLayer API key to capture live screenshots</span>
-                        `;
-                    }
+                    placeholderImg.style.display = 'none';
+                    screenshotError.style.display = 'flex';
+                    errorText.textContent = 'Could not capture screenshot. Your API key may have expired or you\'ve used all free screenshots.';
                 }
 
                 const scoreItems = [
@@ -1487,45 +1175,27 @@
                     const cls = getScoreClass(item.value);
                     const label = getScoreLabel(item.value);
                     const pct = Math.min(100, Math.max(0, item.value));
-                    return `
-                        <div class="score-item ${cls}">
-                            <div class="label">
-                                <span>${item.label}</span>
-                                <span class="badge">${label}</span>
-                            </div>
-                            <div class="value">${item.value}<span class="denom">/100</span></div>
-                            <div class="score-bar"><div class="fill" style="width:${pct}%;"></div></div>
-                            <div class="sub-text">${item.key === 'alt' ? 'Image alt text quality' :
-                                     item.key === 'product' ? 'Product page optimization' :
-                                     item.key === 'performance' ? 'Speed & loading' :
-                                     item.key === 'mobile' ? 'Mobile experience' :
-                                     'Overall health'}</div>
-                        </div>
-                    `;
+                    return `<div class="score-item ${cls}">
+                        <div class="label"><span>${item.label}</span><span class="badge">${label}</span></div>
+                        <div class="value">${item.value}<span class="denom">/100</span></div>
+                        <div class="score-bar"><div class="fill" style="width:${pct}%;"></div></div>
+                        <div class="sub-text">${item.key === 'alt' ? 'Image alt text quality' : item.key === 'product' ? 'Product page optimization' : item.key === 'performance' ? 'Speed & loading' : item.key === 'mobile' ? 'Mobile experience' : 'Overall health'}</div>
+                    </div>`;
                 }).join('');
 
                 summaryList.innerHTML = data.summaries.map(item => {
                     const impactLabel = item.impact.charAt(0).toUpperCase() + item.impact.slice(1);
-                    return `
-                        <div class="summary-item">
-                            <div class="issue">${item.title}: ${item.issue}</div>
-                            <div class="explanation">${item.explanation}</div>
-                            <div class="impact">
-                                <span>Impact: <strong>${impactLabel}</strong></span>
-                                <span class="tag ${item.impact}">${item.impact}</span>
-                                <span style="margin-left:auto;font-size:13px;">Score: ${item.score}/100</span>
-                            </div>
-                        </div>
-                    `;
+                    return `<div class="summary-item">
+                        <div class="issue">${item.title}: ${item.issue}</div>
+                        <div class="explanation">${item.explanation}</div>
+                        <div class="impact"><span>Impact: <strong>${impactLabel}</strong></span><span class="tag ${item.impact}">${item.impact}</span><span style="margin-left:auto;font-size:13px;">Score: ${item.score}/100</span></div>
+                    </div>`;
                 }).join('');
 
                 recList.innerHTML = data.recommendations.map((rec, idx) => `
                     <div class="rec-item">
                         <div class="num">${idx + 1}</div>
-                        <div class="content">
-                            <div class="title">${rec.title}</div>
-                            <div class="desc">${rec.desc}</div>
-                        </div>
+                        <div class="content"><div class="title">${rec.title}</div><div class="desc">${rec.desc}</div></div>
                     </div>
                 `).join('');
 
@@ -1534,48 +1204,31 @@
 
             async function runAudit() {
                 let url = storeUrlInput.value.trim();
-                if (!url) {
-                    showToast('Please enter a Shopify store URL.', 'error');
-                    return;
-                }
-
-                if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                    url = 'https://' + url;
-                }
-
+                if (!url) { showToast('Please enter a Shopify store URL.', 'error'); return; }
+                if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
                 if (!url.includes('myshopify.com') && !url.includes('shopify.com')) {
-                    showToast('Please enter a valid Shopify store URL (e.g., store.myshopify.com).', 'error');
+                    showToast('Please enter a valid Shopify store URL.', 'error');
                     return;
                 }
-
-                const key = apiKeyInput.value.trim();
-                if (key) saveApiKey(key);
 
                 loading.classList.add('active');
                 runBtn.disabled = true;
-
                 let screenshotUrl = null;
 
                 try {
                     try {
                         screenshotUrl = await captureScreenshot(url);
                     } catch (err) {
-                        console.warn('Screenshot error:', err);
-                        errorText.textContent = err.message || 'Failed to capture screenshot. Please check your API key.';
+                        errorText.textContent = err.message || 'Failed to capture screenshot.';
                     }
-
                     renderDashboard(url, screenshotUrl);
-
                     if (screenshotUrl) {
-                        showToast('Audit complete with screenshot!', 'success');
-                    } else if (getApiKey()) {
-                        showToast('Audit complete but screenshot failed. Check your API key or free tier limits.', 'error');
+                        showToast('✅ Audit complete with screenshot!', 'success');
                     } else {
-                        showToast('Audit complete! Add a ScreenshotLayer API key for screenshots.', 'info');
+                        showToast('⚠️ Audit complete but screenshot failed. Check your API key.', 'error');
                     }
                 } catch (err) {
-                    console.error(err);
-                    showToast('Error running audit: ' + err.message, 'error');
+                    showToast('Error: ' + err.message, 'error');
                 } finally {
                     loading.classList.remove('active');
                     runBtn.disabled = false;
@@ -1583,11 +1236,7 @@
             }
 
             async function exportPDF() {
-                if (!auditData) {
-                    showToast('Run an audit first before exporting.', 'error');
-                    return;
-                }
-
+                if (!auditData) { showToast('Run an audit first.', 'error'); return; }
                 const btn = downloadBtn;
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '⏳ Generating…';
@@ -1596,43 +1245,28 @@
                 try {
                     const element = document.getElementById('dashboard');
                     element.classList.add('pdf-export');
-
-                    const canvas = await html2canvas(element, {
-                        scale: 2,
-                        useCORS: true,
-                        backgroundColor: '#F5F7FC',
-                        logging: false,
-                        windowWidth: 1280,
-                    });
-
+                    const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#F5F7FC', logging: false, windowWidth: 1280 });
                     const imgData = canvas.toDataURL('image/png');
                     const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF('p', 'mm', 'a4');
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-                    let heightLeft = pdfHeight;
-                    let position = 0;
-
+                    let heightLeft = pdfHeight,
+                        position = 0;
                     pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
                     heightLeft -= pdf.internal.pageSize.getHeight();
-
                     while (heightLeft > 0) {
                         position = heightLeft - pdfHeight;
                         pdf.addPage();
                         pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
                         heightLeft -= pdf.internal.pageSize.getHeight();
                     }
-
-                    const filename =
-                        `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+                    const filename = `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
                     pdf.save(filename);
-
                     element.classList.remove('pdf-export');
-                    showToast('PDF downloaded successfully!', 'success');
+                    showToast('PDF downloaded!', 'success');
                 } catch (err) {
-                    console.error(err);
-                    showToast('Error generating PDF: ' + err.message, 'error');
+                    showToast('Error: ' + err.message, 'error');
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -1649,37 +1283,23 @@
                 settingsModal.classList.add('active');
             }
 
-            function closeSettings() {
-                settingsModal.classList.remove('active');
-            }
+            function closeSettings() { settingsModal.classList.remove('active'); }
 
             runBtn.addEventListener('click', runAudit);
-            storeUrlInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') runAudit();
-            });
+            storeUrlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runAudit(); });
             downloadBtn.addEventListener('click', exportPDF);
             settingsToggle.addEventListener('click', openSettings);
             modalClose.addEventListener('click', closeSettings);
             modalSave.addEventListener('click', saveSettings);
-            settingsModal.addEventListener('click', (e) => {
-                if (e.target === settingsModal) closeSettings();
-            });
-
+            settingsModal.addEventListener('click', (e) => { if (e.target === settingsModal) closeSettings(); });
             [scoreAlt, scoreProduct, scorePerformance, scoreMobile].forEach(input => {
                 input.addEventListener('input', updateOverallPreview);
             });
 
             loadSettings();
-
-            setTimeout(() => {
-                showToast('🔑 API key loaded! Enter a Shopify URL and click "Run Audit".', 'success');
-            }, 600);
-
-            console.log('✅ Shopify SEO Audit Tool loaded with CORS proxy!');
-            console.log('📸 Using CORS proxy to avoid "Failed to fetch" error');
-
+            showToast('🔑 API key loaded! Enter a Shopify URL and click "Run Audit".', 'success');
+            console.log('✅ Shopify SEO Audit Tool loaded! Your API key is ready.');
         })();
     </script>
-
 </body>
 </html>
