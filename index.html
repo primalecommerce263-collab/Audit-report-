@@ -742,12 +742,6 @@
         .remove-img-btn:hover {
             background: #DC2626;
         }
-        .screenshot-preview {
-            display: none;
-        }
-        .screenshot-preview.active {
-            display: block;
-        }
         @media (max-width: 640px) {
             body {
                 padding: 12px;
@@ -808,7 +802,7 @@
             }
         }
 
-        /* ===== PRINT/PDF TEMPLATE STYLES (Hidden from view) ===== */
+        /* ===== PDF/PRINT TEMPLATE STYLES ===== */
         #pdf-template {
             display: none;
         }
@@ -818,11 +812,11 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
+            min-height: 100%;
             background: white;
             z-index: 9999;
-            overflow: auto;
             padding: 40px;
+            overflow-y: visible;
         }
         .pdf-report {
             max-width: 1100px;
@@ -832,6 +826,10 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             color: #1A2332;
             line-height: 1.6;
+            /* REMOVE ANY FIXED HEIGHT OR OVERFLOW HIDDEN */
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
         }
         .pdf-report .pdf-header {
             border-bottom: 3px solid #6C3CE1;
@@ -907,6 +905,7 @@
         }
         .pdf-report .pdf-section {
             margin-bottom: 35px;
+            page-break-inside: avoid;
         }
         .pdf-report .pdf-section-title {
             font-size: 20px;
@@ -919,14 +918,17 @@
         .pdf-report .pdf-screenshot {
             background: #F5F7FC;
             border-radius: 10px;
-            overflow: hidden;
+            overflow: visible;
             margin-bottom: 10px;
             border: 1px solid #E8ECF4;
+            height: auto !important;
+            min-height: auto !important;
         }
         .pdf-report .pdf-screenshot img {
             width: 100%;
             height: auto;
             display: block;
+            max-height: none !important;
         }
         .pdf-report .pdf-scores {
             display: grid;
@@ -1056,6 +1058,7 @@
             align-items: center;
             font-size: 12px;
             color: #6B7A8F;
+            page-break-inside: avoid;
         }
         .pdf-report .pdf-footer .page-number {
             font-weight: 500;
@@ -1095,6 +1098,16 @@
         }
         .pdf-report .pdf-overall-score .status-text.critical {
             color: #EF4444;
+        }
+        /* Ensure all content is visible */
+        .pdf-report * {
+            max-height: none !important;
+            overflow: visible !important;
+        }
+        .pdf-report .pdf-screenshot,
+        .pdf-report .pdf-screenshot img {
+            max-height: none !important;
+            height: auto !important;
         }
     </style>
 </head>
@@ -1206,10 +1219,10 @@
     <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
 
-    <!-- ===== PDF/PRINT TEMPLATE (Hidden, only used for PDF generation) ===== -->
+    <!-- ===== PDF/PRINT TEMPLATE ===== -->
     <div id="pdf-template">
         <div class="pdf-report" id="pdfReportContent">
-            <!-- Template filled dynamically by JavaScript -->
+            <!-- Filled dynamically -->
         </div>
     </div>
 
@@ -1298,10 +1311,6 @@
                 return 'Critical Issues';
             }
 
-            function getImpactClass(impact) {
-                return impact;
-            }
-
             function formatDate() {
                 return new Date().toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -1339,7 +1348,7 @@
                 if (auditData) renderDashboard(auditData.url);
             }
 
-            // ===== SCREENSHOT UPLOAD HANDLERS =====
+            // ===== SCREENSHOT UPLOAD =====
             screenshotUpload.addEventListener('change', function(e) {
                 const file = this.files[0];
                 if (!file) return;
@@ -1530,7 +1539,6 @@
                 const statusClass = getStatusClass(overall);
                 const statusText = getStatusText(overall);
 
-                // Score cards for PDF
                 const scoreItems = [
                     { key: 'alt', label: 'Alt Text', value: scores.alt },
                     { key: 'product', label: 'Product SEO', value: scores.product },
@@ -1549,7 +1557,6 @@
                     </div>`;
                 }).join('');
 
-                // Summary items
                 const summaryHtml = data.summaries.map(item => `
                     <div class="pdf-summary-item">
                         <div class="issue">${item.title}: ${item.issue}</div>
@@ -1559,7 +1566,6 @@
                     </div>
                 `).join('');
 
-                // Recommendations
                 const recHtml = data.recommendations.map((rec, idx) => `
                     <div class="pdf-recommendation">
                         <div class="num">${idx + 1}</div>
@@ -1570,9 +1576,8 @@
                     </div>
                 `).join('');
 
-                // Screenshot HTML
                 const screenshotHtml = screenshotData ? 
-                    `<div class="pdf-screenshot"><img src="${screenshotData}" alt="Store homepage screenshot" /></div>` :
+                    `<div class="pdf-screenshot"><img src="${screenshotData}" alt="Store homepage screenshot" style="width:100%;height:auto;display:block;" /></div>` :
                     `<div style="padding:40px;text-align:center;background:#F5F7FC;border-radius:10px;color:#6B7A8F;border:1px dashed #E8ECF4;">No screenshot uploaded</div>`;
 
                 return `
@@ -1639,50 +1644,109 @@
                 btn.disabled = true;
 
                 try {
-                    // Build the PDF template with data
+                    // Build the PDF template
                     const templateHtml = buildPdfTemplate(auditData, uploadedImageData);
                     pdfReportContent.innerHTML = templateHtml;
 
-                    // Show the template temporarily for rendering
+                    // Show template for rendering
                     pdfTemplate.classList.add('generating');
 
-                    // Wait for DOM update
-                    await new Promise(resolve => setTimeout(resolve, 100));
+                    // Wait for images to load and DOM to update
+                    await new Promise(resolve => setTimeout(resolve, 500));
 
-                    // Capture the template with high quality
-                    const canvas = await html2canvas(pdfReportContent, {
+                    // Get the full height of the content
+                    const contentElement = pdfReportContent;
+                    const fullHeight = contentElement.scrollHeight;
+                    const fullWidth = contentElement.scrollWidth || 1100;
+
+                    // Capture the ENTIRE template with no clipping
+                    const canvas = await html2canvas(contentElement, {
                         scale: 3,
                         useCORS: true,
                         backgroundColor: '#FFFFFF',
                         logging: false,
-                        windowWidth: 1100,
-                        width: 1100,
-                        height: pdfReportContent.scrollHeight,
+                        width: fullWidth,
+                        height: fullHeight,
+                        windowWidth: fullWidth,
+                        windowHeight: fullHeight,
                         onclone: function(clonedDoc) {
                             const element = clonedDoc.getElementById('pdfReportContent');
                             if (element) {
                                 element.style.display = 'block';
+                                element.style.height = 'auto';
+                                element.style.overflow = 'visible';
                             }
+                            // Make sure images are fully loaded
+                            const images = clonedDoc.querySelectorAll('img');
+                            images.forEach(img => {
+                                img.style.maxHeight = 'none';
+                                img.style.height = 'auto';
+                            });
                         }
                     });
 
                     // Hide template
                     pdfTemplate.classList.remove('generating');
 
-                    // Generate PDF
+                    // Generate PDF with multiple pages if needed
                     const imgData = canvas.toDataURL('image/jpeg', 1.0);
                     const { jsPDF } = window.jspdf;
+                    
+                    // A4 dimensions in mm
+                    const pdfWidth = 210; // A4 width in mm
+                    const pdfHeight = 297; // A4 height in mm
+                    
+                    // Calculate how many pages we need
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+                    const ratio = imgWidth / imgHeight;
+                    
+                    // Calculate image dimensions to fit A4
+                    let finalWidth = pdfWidth;
+                    let finalHeight = pdfWidth / ratio;
+                    
+                    // If height exceeds A4 height, we need multiple pages
+                    const maxHeight = pdfHeight;
+                    const pagesNeeded = Math.ceil(finalHeight / maxHeight);
+                    
                     const pdf = new jsPDF('p', 'mm', 'a4');
-
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+                    
+                    // Add first page
+                    let currentHeight = 0;
+                    let pageNum = 1;
+                    
+                    for (let i = 0; i < pagesNeeded; i++) {
+                        if (i > 0) {
+                            pdf.addPage();
+                        }
+                        
+                        // Calculate the portion of the image to show on this page
+                        const yOffset = i * maxHeight / finalHeight * imgHeight;
+                        const pageHeight = Math.min(finalHeight - (i * maxHeight), maxHeight);
+                        const sourceHeight = (pageHeight / finalHeight) * imgHeight;
+                        
+                        // Add the image portion
+                        pdf.addImage(
+                            imgData, 
+                            'JPEG', 
+                            0, 
+                            -(i * maxHeight), 
+                            finalWidth, 
+                            finalHeight,
+                            undefined, 
+                            'FAST'
+                        );
+                        
+                        // Add page number
+                        pdf.setFontSize(10);
+                        pdf.setTextColor('#6B7A8F');
+                        pdf.text(`Page ${i + 1} of ${pagesNeeded}`, pdfWidth - 40, pdfHeight - 10);
+                    }
 
                     const filename = `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
                     pdf.save(filename);
 
-                    showToast('✅ Professional PDF report generated!', 'success');
+                    showToast(`✅ Professional ${pagesNeeded}-page PDF report generated!`, 'success');
                 } catch (err) {
                     console.error('PDF Error:', err);
                     pdfTemplate.classList.remove('generating');
@@ -1721,8 +1785,8 @@
             // ===== INIT =====
             loadSettings();
             showToast('📸 Enter a URL, generate audit, then upload a screenshot!', 'info');
-            console.log('✅ Shopify SEO Audit Tool loaded - Separate PDF template!');
-            console.log('📄 PDF uses dedicated print template, not the web interface.');
+            console.log('✅ Shopify SEO Audit Tool loaded - Multi-page PDF support!');
+            console.log('📄 PDF will auto-expand to multiple pages if needed.');
         })();
     </script>
 
