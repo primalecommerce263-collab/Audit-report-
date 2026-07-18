@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
     </script>
     <style>
+        /* ===== MAIN APP STYLES ===== */
         :root {
             --primary: #6C3CE1;
             --primary-dark: #5228B5;
@@ -741,23 +742,11 @@
         .remove-img-btn:hover {
             background: #DC2626;
         }
-        /* PDF export - hide screenshot upload UI */
-        .pdf-export .screenshot-actions,
-        .pdf-export .upload-btn-wrapper,
-        .pdf-export .upload-btn,
-        .pdf-export .remove-img-btn,
-        .pdf-export .hint,
-        .pdf-export .placeholder {
-            display: none !important;
+        .screenshot-preview {
+            display: none;
         }
-        .pdf-export .screenshot-wrap img {
-            display: block !important;
-        }
-        .pdf-export .screenshot-card {
-            padding-bottom: 0 !important;
-        }
-        .pdf-export .screenshot-wrap {
-            border-radius: var(--radius) !important;
+        .screenshot-preview.active {
+            display: block;
         }
         @media (max-width: 640px) {
             body {
@@ -818,9 +807,300 @@
                 align-items: stretch;
             }
         }
+
+        /* ===== PRINT/PDF TEMPLATE STYLES (Hidden from view) ===== */
+        #pdf-template {
+            display: none;
+        }
+        #pdf-template.generating {
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 9999;
+            overflow: auto;
+            padding: 40px;
+        }
+        .pdf-report {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px 60px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: #1A2332;
+            line-height: 1.6;
+        }
+        .pdf-report .pdf-header {
+            border-bottom: 3px solid #6C3CE1;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .pdf-report .pdf-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #6C3CE1;
+            letter-spacing: -0.5px;
+        }
+        .pdf-report .pdf-logo span {
+            color: #1A2332;
+        }
+        .pdf-report .pdf-date {
+            color: #6B7A8F;
+            font-size: 14px;
+        }
+        .pdf-report .pdf-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1A2332;
+        }
+        .pdf-report .pdf-subtitle {
+            font-size: 18px;
+            color: #6B7A8F;
+            margin-bottom: 30px;
+        }
+        .pdf-report .pdf-store-info {
+            background: #F5F7FC;
+            padding: 20px 24px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border-left: 4px solid #6C3CE1;
+        }
+        .pdf-report .pdf-store-info .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6B7A8F;
+            font-weight: 600;
+        }
+        .pdf-report .pdf-store-info .value {
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 2px;
+            word-break: break-all;
+        }
+        .pdf-report .pdf-store-info .status-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+        .pdf-report .pdf-store-info .status-badge.good {
+            background: #D1FAE5;
+            color: #10B981;
+        }
+        .pdf-report .pdf-store-info .status-badge.warning {
+            background: #FEF3C7;
+            color: #F59E0B;
+        }
+        .pdf-report .pdf-store-info .status-badge.critical {
+            background: #FEE2E2;
+            color: #EF4444;
+        }
+        .pdf-report .pdf-section {
+            margin-bottom: 35px;
+        }
+        .pdf-report .pdf-section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1A2332;
+            border-bottom: 2px solid #E8ECF4;
+            padding-bottom: 8px;
+        }
+        .pdf-report .pdf-screenshot {
+            background: #F5F7FC;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            border: 1px solid #E8ECF4;
+        }
+        .pdf-report .pdf-screenshot img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .pdf-report .pdf-scores {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 700px) {
+            .pdf-report .pdf-scores {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .pdf-report .pdf-score-card {
+            background: #F5F7FC;
+            padding: 16px 18px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .pdf-report .pdf-score-card .score-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6B7A8F;
+            font-weight: 600;
+        }
+        .pdf-report .pdf-score-card .score-value {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 4px 0;
+        }
+        .pdf-report .pdf-score-card .score-value.low {
+            color: #EF4444;
+        }
+        .pdf-report .pdf-score-card .score-value.medium {
+            color: #F59E0B;
+        }
+        .pdf-report .pdf-score-card .score-value.high {
+            color: #10B981;
+        }
+        .pdf-report .pdf-score-card .score-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: #E8ECF4;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+        .pdf-report .pdf-score-card .score-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            transition: width 0.8s ease;
+        }
+        .pdf-report .pdf-summary-item {
+            padding: 14px 16px;
+            background: #F5F7FC;
+            border-radius: 8px;
+            border-left: 4px solid #6C3CE1;
+            margin-bottom: 12px;
+        }
+        .pdf-report .pdf-summary-item .issue {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .pdf-report .pdf-summary-item .explanation {
+            font-size: 14px;
+            color: #6B7A8F;
+            line-height: 1.5;
+        }
+        .pdf-report .pdf-summary-item .impact-tag {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+        .pdf-report .pdf-summary-item .impact-tag.high {
+            background: #FEE2E2;
+            color: #EF4444;
+        }
+        .pdf-report .pdf-summary-item .impact-tag.medium {
+            background: #FEF3C7;
+            color: #F59E0B;
+        }
+        .pdf-report .pdf-summary-item .impact-tag.low {
+            background: #D1FAE5;
+            color: #10B981;
+        }
+        .pdf-report .pdf-recommendation {
+            display: flex;
+            gap: 14px;
+            padding: 12px 16px;
+            background: #F5F7FC;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            align-items: flex-start;
+        }
+        .pdf-report .pdf-recommendation .num {
+            width: 28px;
+            height: 28px;
+            background: #6C3CE1;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .pdf-report .pdf-recommendation .content .title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .pdf-report .pdf-recommendation .content .desc {
+            font-size: 14px;
+            color: #6B7A8F;
+            margin-top: 2px;
+        }
+        .pdf-report .pdf-footer {
+            border-top: 2px solid #E8ECF4;
+            padding-top: 20px;
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #6B7A8F;
+        }
+        .pdf-report .pdf-footer .page-number {
+            font-weight: 500;
+        }
+        .pdf-report .pdf-watermark {
+            color: #E8ECF4;
+            font-size: 12px;
+        }
+        .pdf-report .pdf-overall-score {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #F5F7FC;
+            padding: 16px 24px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .pdf-report .pdf-overall-score .big-score {
+            font-size: 48px;
+            font-weight: 700;
+            color: #6C3CE1;
+        }
+        .pdf-report .pdf-overall-score .big-score .denom {
+            font-size: 24px;
+            color: #6B7A8F;
+            font-weight: 400;
+        }
+        .pdf-report .pdf-overall-score .status-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        .pdf-report .pdf-overall-score .status-text.good {
+            color: #10B981;
+        }
+        .pdf-report .pdf-overall-score .status-text.warning {
+            color: #F59E0B;
+        }
+        .pdf-report .pdf-overall-score .status-text.critical {
+            color: #EF4444;
+        }
     </style>
 </head>
 <body>
+
+    <!-- ===== MAIN APP ===== -->
     <div class="app-container" id="app">
         <header class="app-header">
             <div class="brand">
@@ -857,12 +1137,12 @@
                     <span class="url-badge" id="reportUrl">—</span>
                     <span class="status"><span class="dot green" id="statusDot"></span><span id="statusText">Ready</span></span>
                 </div>
-                <button class="download-btn" id="downloadPdfBtn">📄 Download PDF Report</button>
+                <button class="download-btn" id="downloadPdfBtn">📄 Generate PDF Report</button>
             </div>
 
             <div class="dashboard-grid">
                 <div class="col-left">
-                    <!-- SCREENSHOT SECTION - Visible in UI, hidden in PDF -->
+                    <!-- Screenshot Upload Section -->
                     <div class="card screenshot-card" style="margin-bottom:28px;">
                         <div class="card-title">📸 Homepage Screenshot</div>
                         <div class="screenshot-wrap" id="screenshotWrap">
@@ -909,6 +1189,7 @@
         </footer>
     </div>
 
+    <!-- ===== SETTINGS MODAL ===== -->
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <h2>⚙️ Customize Scores</h2>
@@ -921,10 +1202,20 @@
             <div class="modal-actions"><button class="btn-close" id="modalClose">Cancel</button><button class="btn-save" id="modalSave">Save Settings</button></div>
         </div>
     </div>
+
+    <!-- ===== TOAST ===== -->
     <div class="toast" id="toast"></div>
+
+    <!-- ===== PDF/PRINT TEMPLATE (Hidden, only used for PDF generation) ===== -->
+    <div id="pdf-template">
+        <div class="pdf-report" id="pdfReportContent">
+            <!-- Template filled dynamically by JavaScript -->
+        </div>
+    </div>
 
     <script>
         (function() {
+            // ===== DOM REFERENCES =====
             const storeUrlInput = document.getElementById('storeUrl');
             const runBtn = document.getElementById('runAuditBtn');
             const loading = document.getElementById('loadingOverlay');
@@ -950,12 +1241,16 @@
             const scoreProduct = document.getElementById('scoreProduct');
             const scorePerformance = document.getElementById('scorePerformance');
             const scoreMobile = document.getElementById('scoreMobile');
+            const pdfTemplate = document.getElementById('pdf-template');
+            const pdfReportContent = document.getElementById('pdfReportContent');
 
+            // ===== STATE =====
             let currentScores = { alt: 10, product: 18, performance: 15, mobile: 22, overall: 0 };
             let auditData = null;
             let toastTimer = null;
             let uploadedImageData = null;
 
+            // ===== HELPERS =====
             function showToast(msg, type = 'info') {
                 if (toastTimer) clearTimeout(toastTimer);
                 toast.textContent = msg;
@@ -991,6 +1286,30 @@
                 return 'Critical';
             }
 
+            function getStatusClass(score) {
+                if (score >= 70) return 'good';
+                if (score >= 40) return 'warning';
+                return 'critical';
+            }
+
+            function getStatusText(score) {
+                if (score >= 70) return 'Good Shape';
+                if (score >= 40) return 'Needs Improvement';
+                return 'Critical Issues';
+            }
+
+            function getImpactClass(impact) {
+                return impact;
+            }
+
+            function formatDate() {
+                return new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+
             function loadSettings() {
                 const saved = localStorage.getItem('shopifyAudit_scores');
                 if (saved) {
@@ -1020,7 +1339,7 @@
                 if (auditData) renderDashboard(auditData.url);
             }
 
-            // Handle screenshot upload
+            // ===== SCREENSHOT UPLOAD HANDLERS =====
             screenshotUpload.addEventListener('change', function(e) {
                 const file = this.files[0];
                 if (!file) return;
@@ -1038,7 +1357,6 @@
                 reader.readAsDataURL(file);
             });
 
-            // Remove screenshot
             removeScreenshotBtn.addEventListener('click', function() {
                 screenshotImg.style.display = 'none';
                 placeholderImg.style.display = 'flex';
@@ -1048,6 +1366,7 @@
                 showToast('Screenshot removed', 'info');
             });
 
+            // ===== GENERATE AUDIT DATA =====
             function generateAuditData(storeUrl, scores) {
                 const url = storeUrl.startsWith('http') ? storeUrl : 'https://' + storeUrl;
                 const summaries = [];
@@ -1062,8 +1381,10 @@
                     impact: altScore < 30 ? 'high' : altScore < 60 ? 'medium' : 'low',
                     score: altScore,
                 });
-                recs.push({ title: 'Improve Image Alt Text',
-                    desc: 'Write descriptive alt text for every product image that includes relevant keywords.' });
+                recs.push({
+                    title: 'Improve Image Alt Text',
+                    desc: 'Write descriptive alt text for every product image that includes relevant keywords.'
+                });
 
                 const prodScore = scores.product;
                 summaries.push({
@@ -1074,8 +1395,10 @@
                     impact: prodScore < 30 ? 'high' : prodScore < 60 ? 'medium' : 'low',
                     score: prodScore,
                 });
-                recs.push({ title: 'Optimize Product Pages',
-                    desc: 'Optimize product titles with primary keywords, write unique descriptions (200+ words), and use structured data.' });
+                recs.push({
+                    title: 'Optimize Product Pages',
+                    desc: 'Optimize product titles with primary keywords, write unique descriptions (200+ words), and use structured data.'
+                });
 
                 const perfScore = scores.performance;
                 summaries.push({
@@ -1086,8 +1409,10 @@
                     impact: perfScore < 30 ? 'high' : perfScore < 60 ? 'medium' : 'low',
                     score: perfScore,
                 });
-                recs.push({ title: 'Boost Page Speed',
-                    desc: 'Compress images, enable browser caching, minify CSS/JS, and use a CDN.' });
+                recs.push({
+                    title: 'Boost Page Speed',
+                    desc: 'Compress images, enable browser caching, minify CSS/JS, and use a CDN.'
+                });
 
                 const mobScore = scores.mobile;
                 summaries.push({
@@ -1098,8 +1423,10 @@
                     impact: mobScore < 30 ? 'high' : mobScore < 60 ? 'medium' : 'low',
                     score: mobScore,
                 });
-                recs.push({ title: 'Enhance Mobile Experience',
-                    desc: 'Use a responsive theme, ensure touch targets are large, and simplify mobile navigation.' });
+                recs.push({
+                    title: 'Enhance Mobile Experience',
+                    desc: 'Use a responsive theme, ensure touch targets are large, and simplify mobile navigation.'
+                });
 
                 const overall = scores.overall;
                 summaries.unshift({
@@ -1110,14 +1437,17 @@
                     impact: overall < 30 ? 'high' : overall < 60 ? 'medium' : 'low',
                     score: overall,
                 });
-                recs.unshift({ title: 'Audit Summary',
-                    desc: 'Prioritize the recommendations above to improve your store\'s discoverability.' });
+                recs.unshift({
+                    title: 'Audit Summary',
+                    desc: 'Prioritize the recommendations above to improve your store\'s discoverability.'
+                });
 
                 const impactOrder = { high: 0, medium: 1, low: 2 };
                 summaries.sort((a, b) => impactOrder[a.impact] - impactOrder[b.impact]);
                 return { url, scores, summaries, recommendations: recs };
             }
 
+            // ===== RENDER DASHBOARD =====
             function renderDashboard(storeUrl) {
                 const scores = currentScores;
                 const data = generateAuditData(storeUrl, scores);
@@ -1169,6 +1499,7 @@
                 dashboard.classList.add('active');
             }
 
+            // ===== RUN AUDIT =====
             async function runAudit() {
                 let url = storeUrlInput.value.trim();
                 if (!url) { showToast('Please enter a Shopify store URL.', 'error'); return; }
@@ -1192,11 +1523,113 @@
                 }
             }
 
-            async function exportPDF() {
-                if (!auditData) { showToast('Generate an audit first.', 'error'); return; }
+            // ===== BUILD PDF TEMPLATE =====
+            function buildPdfTemplate(data, screenshotData) {
+                const scores = data.scores;
+                const overall = scores.overall;
+                const statusClass = getStatusClass(overall);
+                const statusText = getStatusText(overall);
+
+                // Score cards for PDF
+                const scoreItems = [
+                    { key: 'alt', label: 'Alt Text', value: scores.alt },
+                    { key: 'product', label: 'Product SEO', value: scores.product },
+                    { key: 'performance', label: 'Performance', value: scores.performance },
+                    { key: 'mobile', label: 'Mobile Friendly', value: scores.mobile },
+                    { key: 'overall', label: 'Overall', value: scores.overall },
+                ];
+
+                const scoreCardsHtml = scoreItems.map(item => {
+                    const scoreClass = item.value >= 70 ? 'high' : item.value >= 40 ? 'medium' : 'low';
+                    const pct = Math.min(100, Math.max(0, item.value));
+                    return `<div class="pdf-score-card">
+                        <div class="score-label">${item.label}</div>
+                        <div class="score-value ${scoreClass}">${item.value}<span style="font-size:18px;color:#6B7A8F;font-weight:400;">/100</span></div>
+                        <div class="score-bar-bg"><div class="score-bar-fill" style="width:${pct}%;background:${item.value >= 70 ? '#10B981' : item.value >= 40 ? '#F59E0B' : '#EF4444'};"></div></div>
+                    </div>`;
+                }).join('');
+
+                // Summary items
+                const summaryHtml = data.summaries.map(item => `
+                    <div class="pdf-summary-item">
+                        <div class="issue">${item.title}: ${item.issue}</div>
+                        <div class="explanation">${item.explanation}</div>
+                        <span class="impact-tag ${item.impact}">${item.impact.toUpperCase()} IMPACT</span>
+                        <span style="margin-left:12px;font-size:13px;color:#6B7A8F;">Score: ${item.score}/100</span>
+                    </div>
+                `).join('');
+
+                // Recommendations
+                const recHtml = data.recommendations.map((rec, idx) => `
+                    <div class="pdf-recommendation">
+                        <div class="num">${idx + 1}</div>
+                        <div class="content">
+                            <div class="title">${rec.title}</div>
+                            <div class="desc">${rec.desc}</div>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Screenshot HTML
+                const screenshotHtml = screenshotData ? 
+                    `<div class="pdf-screenshot"><img src="${screenshotData}" alt="Store homepage screenshot" /></div>` :
+                    `<div style="padding:40px;text-align:center;background:#F5F7FC;border-radius:10px;color:#6B7A8F;border:1px dashed #E8ECF4;">No screenshot uploaded</div>`;
+
+                return `
+                    <div class="pdf-header">
+                        <div class="pdf-logo">SEO <span>Audit</span></div>
+                        <div class="pdf-date">Generated: ${formatDate()}</div>
+                    </div>
+
+                    <h1 class="pdf-title">Shopify SEO Audit Report</h1>
+                    <p class="pdf-subtitle">A comprehensive analysis of your store's search engine optimization</p>
+
+                    <div class="pdf-store-info">
+                        <div class="label">Store URL</div>
+                        <div class="value">${data.url}</div>
+                        <div>
+                            <span class="status-badge ${statusClass}">${statusText}</span>
+                            <span style="margin-left:12px;font-size:14px;color:#6B7A8F;">Overall Score: ${overall}/100</span>
+                        </div>
+                    </div>
+
+                    <div class="pdf-section">
+                        <h2 class="pdf-section-title">📸 Homepage Screenshot</h2>
+                        ${screenshotHtml}
+                    </div>
+
+                    <div class="pdf-section">
+                        <h2 class="pdf-section-title">🎯 Performance Scores</h2>
+                        <div class="pdf-scores">${scoreCardsHtml}</div>
+                    </div>
+
+                    <div class="pdf-section">
+                        <h2 class="pdf-section-title">📋 Audit Summary</h2>
+                        ${summaryHtml}
+                    </div>
+
+                    <div class="pdf-section">
+                        <h2 class="pdf-section-title">💡 Top Recommendations</h2>
+                        ${recHtml}
+                    </div>
+
+                    <div class="pdf-footer">
+                        <span>Shopify SEO Audit Tool</span>
+                        <span class="page-number">Page 1 of 1</span>
+                        <span>Confidential</span>
+                    </div>
+                `;
+            }
+
+            // ===== GENERATE PDF =====
+            async function generatePDF() {
+                if (!auditData) {
+                    showToast('Generate an audit first.', 'error');
+                    return;
+                }
 
                 if (!uploadedImageData) {
-                    showToast('⚠️ Please upload a screenshot before downloading the PDF.', 'error');
+                    showToast('⚠️ Please upload a screenshot before generating the PDF.', 'error');
                     return;
                 }
 
@@ -1206,45 +1639,53 @@
                 btn.disabled = true;
 
                 try {
-                    const element = document.getElementById('dashboard');
-                    
-                    // CRYSTAL CLEAR - Scale 4 for maximum quality
-                    const canvas = await html2canvas(element, {
-                        scale: 4,
+                    // Build the PDF template with data
+                    const templateHtml = buildPdfTemplate(auditData, uploadedImageData);
+                    pdfReportContent.innerHTML = templateHtml;
+
+                    // Show the template temporarily for rendering
+                    pdfTemplate.classList.add('generating');
+
+                    // Wait for DOM update
+                    await new Promise(resolve => setTimeout(resolve, 100));
+
+                    // Capture the template with high quality
+                    const canvas = await html2canvas(pdfReportContent, {
+                        scale: 3,
                         useCORS: true,
                         backgroundColor: '#FFFFFF',
                         logging: false,
-                        windowWidth: 1280,
-                        width: 1280,
-                        height: element.scrollHeight,
+                        windowWidth: 1100,
+                        width: 1100,
+                        height: pdfReportContent.scrollHeight,
                         onclone: function(clonedDoc) {
-                            // Ensure screenshot is visible in PDF
-                            const clonedImg = clonedDoc.getElementById('screenshotImg');
-                            if (clonedImg) {
-                                clonedImg.style.display = 'block';
-                            }
-                            const clonedPlaceholder = clonedDoc.getElementById('placeholderImg');
-                            if (clonedPlaceholder) {
-                                clonedPlaceholder.style.display = 'none';
+                            const element = clonedDoc.getElementById('pdfReportContent');
+                            if (element) {
+                                element.style.display = 'block';
                             }
                         }
                     });
 
+                    // Hide template
+                    pdfTemplate.classList.remove('generating');
+
+                    // Generate PDF
                     const imgData = canvas.toDataURL('image/jpeg', 1.0);
                     const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF('p', 'mm', 'a4');
-                    
+
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                    
+
                     pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
 
                     const filename = `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
                     pdf.save(filename);
-                    
-                    showToast('✅ High-quality PDF downloaded!', 'success');
+
+                    showToast('✅ Professional PDF report generated!', 'success');
                 } catch (err) {
                     console.error('PDF Error:', err);
+                    pdfTemplate.classList.remove('generating');
                     showToast('Error generating PDF: ' + err.message, 'error');
                 } finally {
                     btn.innerHTML = originalText;
@@ -1252,6 +1693,7 @@
                 }
             }
 
+            // ===== SETTINGS =====
             function openSettings() {
                 const s = getScoresFromInputs();
                 scoreAlt.value = s.alt;
@@ -1264,9 +1706,10 @@
 
             function closeSettings() { settingsModal.classList.remove('active'); }
 
+            // ===== EVENT LISTENERS =====
             runBtn.addEventListener('click', runAudit);
             storeUrlInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runAudit(); });
-            downloadBtn.addEventListener('click', exportPDF);
+            downloadBtn.addEventListener('click', generatePDF);
             settingsToggle.addEventListener('click', openSettings);
             modalClose.addEventListener('click', closeSettings);
             modalSave.addEventListener('click', saveSettings);
@@ -1275,10 +1718,13 @@
                 input.addEventListener('input', updateOverallPreview);
             });
 
+            // ===== INIT =====
             loadSettings();
-            showToast('📸 Enter a URL, generate audit, then upload screenshot!', 'info');
-            console.log('✅ Shopify SEO Audit Tool loaded - Screenshot upload visible in UI, hidden in PDF');
+            showToast('📸 Enter a URL, generate audit, then upload a screenshot!', 'info');
+            console.log('✅ Shopify SEO Audit Tool loaded - Separate PDF template!');
+            console.log('📄 PDF uses dedicated print template, not the web interface.');
         })();
     </script>
+
 </body>
 </html>
