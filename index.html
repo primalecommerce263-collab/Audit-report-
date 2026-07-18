@@ -27,14 +27,11 @@
             --score-low: #EF4444;
             --score-medium: #F59E0B;
             --score-high: #10B981;
-            --score-unknown: #94A3B8;
         }
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
         body {
             font-family: var(--font);
@@ -78,12 +75,10 @@
             color: #fff;
             font-weight: 700;
             font-size: 20px;
-            letter-spacing: -0.5px;
         }
         .brand h1 {
             font-size: 24px;
             font-weight: 700;
-            letter-spacing: -0.5px;
             background: linear-gradient(135deg, var(--primary), var(--primary-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -95,11 +90,6 @@
             font-weight: 400;
             -webkit-text-fill-color: var(--text-muted);
         }
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
         .btn-settings {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -110,9 +100,6 @@
             color: var(--text);
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         .btn-settings:hover {
             border-color: var(--primary);
@@ -354,6 +341,7 @@
             padding-top: 62.5%;
             background: var(--bg);
             overflow: hidden;
+            border-radius: 0 0 var(--radius) var(--radius);
         }
         .screenshot-wrap img {
             position: absolute;
@@ -383,6 +371,36 @@
         .screenshot-wrap .placeholder .icon {
             font-size: 40px;
             opacity: 0.4;
+        }
+        .upload-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            margin-top: 8px;
+        }
+        .upload-btn:hover {
+            background: var(--primary-dark);
+        }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .upload-btn-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
         }
         .score-grid {
             display: grid;
@@ -464,12 +482,6 @@
         }
         .score-high .fill {
             background: var(--score-high);
-        }
-        .score-unknown .value {
-            color: var(--score-unknown);
-        }
-        .score-unknown .fill {
-            background: var(--score-unknown);
         }
         .summary-list {
             display: flex;
@@ -676,6 +688,59 @@
             font-size: 13px;
             color: var(--text-muted);
         }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--secondary);
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.20);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 2000;
+            max-width: 400px;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .toast.error {
+            background: var(--score-low);
+        }
+        .toast.success {
+            background: var(--score-high);
+        }
+        .screenshot-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .screenshot-actions .hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .remove-img-btn {
+            background: #EF4444;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+        }
+        .remove-img-btn:hover {
+            background: #DC2626;
+        }
         @media (max-width: 640px) {
             body {
                 padding: 12px;
@@ -730,126 +795,10 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-            .header-actions {
-                width: 100%;
+            .screenshot-actions {
+                flex-direction: column;
+                align-items: stretch;
             }
-            .header-actions .btn-settings {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-        @media (max-width: 400px) {
-            .score-grid {
-                grid-template-columns: 1fr;
-            }
-            .modal .field .score-row {
-                grid-template-columns: 1fr;
-            }
-        }
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--secondary);
-            color: #fff;
-            padding: 14px 24px;
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.20);
-            transform: translateY(80px);
-            opacity: 0;
-            transition: all 0.4s ease;
-            z-index: 2000;
-            max-width: 400px;
-        }
-        .toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        .toast.error {
-            background: var(--score-low);
-        }
-        .toast.success {
-            background: var(--score-high);
-        }
-        .api-key-inline {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-            padding: 12px 16px;
-            background: var(--bg);
-            border-radius: var(--radius-sm);
-            border: 1px solid var(--border);
-        }
-        .api-key-inline label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-        .api-key-inline input {
-            flex: 1;
-            min-width: 160px;
-            padding: 8px 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 13px;
-            font-family: var(--font);
-            background: #fff;
-            outline: none;
-            transition: var(--transition);
-        }
-        .api-key-inline input:focus {
-            border-color: var(--primary);
-        }
-        .api-key-inline .hint-text {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        .api-key-inline .hint-text a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-        .api-key-inline .hint-text a:hover {
-            text-decoration: underline;
-        }
-        .screenshot-error {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg);
-            color: var(--score-low);
-            padding: 20px;
-            text-align: center;
-        }
-        .screenshot-error .icon {
-            font-size: 40px;
-            margin-bottom: 8px;
-        }
-        .screenshot-error .error-text {
-            font-size: 14px;
-            max-width: 300px;
-            color: var(--text);
-        }
-        .api-status {
-            font-size: 12px;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: var(--border);
-            color: var(--text-muted);
-            margin-left: 8px;
-        }
-        .api-status.active {
-            background: #D1FAE5;
-            color: var(--score-high);
         }
     </style>
 </head>
@@ -867,6 +816,7 @@
                 <button class="btn-settings" id="settingsToggle">⚙️ Settings</button>
             </div>
         </header>
+
         <section class="input-section">
             <p class="subtitle">Enter any Shopify store URL to generate a custom SEO audit report.</p>
             <div class="input-row">
@@ -874,18 +824,14 @@
                     <span class="prefix">https://</span>
                     <input type="text" id="storeUrl" placeholder="your-store.myshopify.com" value="gymshark.myshopify.com" />
                 </div>
-                <button class="btn-primary" id="runAuditBtn"><span>▶</span> Run Audit</button>
-            </div>
-            <div class="api-key-inline">
-                <label for="apiKeyInput">🔑 ScreenshotLayer API Key</label>
-                <input type="text" id="apiKeyInput" placeholder="Enter your API key" value="b8a05e43d2e03d3f00a506f6c5d91f58" />
-                <span class="hint-text">Get free key at <a href="https://screenshotlayer.com/" target="_blank">screenshotlayer.com</a></span>
+                <button class="btn-primary" id="runAuditBtn"><span>▶</span> Generate Audit</button>
             </div>
             <div class="loading-overlay" id="loadingOverlay">
                 <div class="spinner"></div>
-                <span>Auditing store… capturing screenshot &amp; analyzing SEO signals</span>
+                <span>Generating audit report…</span>
             </div>
         </section>
+
         <div class="dashboard" id="dashboard">
             <div class="store-header">
                 <div class="store-info">
@@ -895,24 +841,37 @@
                 </div>
                 <button class="download-btn" id="downloadPdfBtn">📄 Download PDF Report</button>
             </div>
+
             <div class="dashboard-grid">
                 <div class="col-left">
                     <div class="card screenshot-card" style="margin-bottom:28px;">
-                        <div class="card-title">📸 Homepage Preview</div>
+                        <div class="card-title">📸 Homepage Screenshot</div>
                         <div class="screenshot-wrap" id="screenshotWrap">
-                            <div class="placeholder" id="placeholderImg"><span class="icon">🖼️</span><span>Screenshot will appear here</span></div>
-                            <img id="screenshotImg" style="display:none;" alt="Store homepage screenshot" />
-                            <div class="screenshot-error" id="screenshotError" style="display:none;">
-                                <div class="icon">⚠️</div>
-                                <div class="error-text" id="errorText">Failed to capture screenshot. Please check your API key.</div>
+                            <div class="placeholder" id="placeholderImg">
+                                <span class="icon">🖼️</span>
+                                <span>Upload a screenshot of the store homepage</span>
+                                <span style="font-size:12px;color:var(--text-muted);">Take a screenshot, then upload it here</span>
+                            </div>
+                            <img id="screenshotImg" style="display:none;" alt="Store screenshot" />
+                        </div>
+                        <div style="padding:16px 24px 20px;">
+                            <div class="screenshot-actions">
+                                <div class="upload-btn-wrapper">
+                                    <button class="upload-btn">📤 Upload Screenshot</button>
+                                    <input type="file" id="screenshotUpload" accept="image/*" />
+                                </div>
+                                <button class="remove-img-btn" id="removeScreenshot" style="display:none;">✕ Remove</button>
+                                <span class="hint">Upload a PNG or JPG screenshot</span>
                             </div>
                         </div>
                     </div>
+
                     <div class="card">
                         <div class="card-title">📋 Audit Summary</div>
                         <div class="summary-list" id="summaryList"></div>
                     </div>
                 </div>
+
                 <div class="col-right">
                     <div class="card" style="margin-bottom:28px;">
                         <div class="card-title">🎯 SEO Scores</div>
@@ -925,10 +884,12 @@
                 </div>
             </div>
         </div>
+
         <footer class="app-footer">
             <p>Shopify SEO Audit Tool &bull; Built for store owners &amp; agencies &bull; Scores are custom, not Google's</p>
         </footer>
     </div>
+
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
             <h2>⚙️ Customize Scores</h2>
@@ -942,13 +903,10 @@
         </div>
     </div>
     <div class="toast" id="toast"></div>
+
     <script>
         (function() {
-            // YOUR NEW API KEY
-            const YOUR_API_KEY = 'b8a05e43d2e03d3f00a506f6c5d91f58';
-            
             const storeUrlInput = document.getElementById('storeUrl');
-            const apiKeyInput = document.getElementById('apiKeyInput');
             const runBtn = document.getElementById('runAuditBtn');
             const loading = document.getElementById('loadingOverlay');
             const dashboard = document.getElementById('dashboard');
@@ -957,8 +915,8 @@
             const statusText = document.getElementById('statusText');
             const screenshotImg = document.getElementById('screenshotImg');
             const placeholderImg = document.getElementById('placeholderImg');
-            const screenshotError = document.getElementById('screenshotError');
-            const errorText = document.getElementById('errorText');
+            const screenshotUpload = document.getElementById('screenshotUpload');
+            const removeScreenshotBtn = document.getElementById('removeScreenshot');
             const scoreGrid = document.getElementById('scoreGrid');
             const summaryList = document.getElementById('summaryList');
             const recList = document.getElementById('recList');
@@ -973,13 +931,11 @@
             const scoreProduct = document.getElementById('scoreProduct');
             const scorePerformance = document.getElementById('scorePerformance');
             const scoreMobile = document.getElementById('scoreMobile');
-            
+
             let currentScores = { alt: 10, product: 18, performance: 15, mobile: 22, overall: 0 };
             let auditData = null;
             let toastTimer = null;
-            
-            // Set the API key
-            apiKeyInput.value = YOUR_API_KEY;
+            let uploadedImageData = null;
 
             function showToast(msg, type = 'info') {
                 if (toastTimer) clearTimeout(toastTimer);
@@ -988,12 +944,6 @@
                 void toast.offsetWidth;
                 toast.classList.add('show');
                 toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 4000);
-            }
-
-            function getApiKey() {
-                const inputKey = apiKeyInput.value.trim();
-                if (inputKey) return inputKey;
-                return localStorage.getItem('shopifyAudit_apiKey') || '';
             }
 
             function getScoresFromInputs() {
@@ -1039,108 +989,16 @@
 
             function saveSettings() {
                 const s = getScoresFromInputs();
-                localStorage.setItem('shopifyAudit_scores', JSON.stringify({ alt: s.alt, product: s.product, performance: s.performance, mobile: s.mobile }));
+                localStorage.setItem('shopifyAudit_scores', JSON.stringify({
+                    alt: s.alt,
+                    product: s.product,
+                    performance: s.performance,
+                    mobile: s.mobile
+                }));
                 currentScores = s;
                 showToast('Settings saved!', 'success');
                 settingsModal.classList.remove('active');
-                if (auditData) renderDashboard(auditData.url, auditData.screenshotUrl);
-            }
-
-            async function captureScreenshot(url) {
-                const apiKey = getApiKey();
-                if (!apiKey) {
-                    throw new Error('Please enter your API key');
-                }
-
-                let cleanUrl = url.trim();
-                if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
-                    cleanUrl = 'https://' + cleanUrl;
-                }
-
-                console.log('📸 Capturing screenshot for:', cleanUrl);
-                console.log('🔑 Using API key:', apiKey.substring(0, 8) + '...');
-
-                // Build the ScreenshotLayer URL
-                const apiUrl = `http://api.screenshotlayer.com/api/capture?access_key=${apiKey}&url=${encodeURIComponent(cleanUrl)}&viewport=1280x800&width=1280&height=800&fullpage=1&format=PNG&wait_for=3000&timeout=30000`;
-                
-                // Try with CORS proxy (more reliable)
-                const corsProxy = 'https://api.allorigins.win/raw?url=';
-                const proxyUrl = corsProxy + encodeURIComponent(apiUrl);
-
-                try {
-                    console.log('🔄 Trying with CORS proxy...');
-                    const response = await fetch(proxyUrl, {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'image/png, image/*',
-                        },
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
-
-                    // Check if we got an image
-                    const contentType = response.headers.get('content-type') || '';
-                    
-                    if (contentType.includes('application/json')) {
-                        const json = await response.json();
-                        console.error('API Error:', json);
-                        if (json.error) {
-                            throw new Error(json.error.info || json.error);
-                        }
-                        throw new Error('Unknown API error');
-                    }
-
-                    if (!contentType.includes('image')) {
-                        const text = await response.text();
-                        try {
-                            const json = JSON.parse(text);
-                            if (json.error) {
-                                throw new Error(json.error.info || json.error);
-                            }
-                        } catch (_) {
-                            // If it's not JSON, check if it's an error message
-                            if (text.includes('invalid') || text.includes('error') || text.includes('limit')) {
-                                throw new Error(text.substring(0, 100));
-                            }
-                        }
-                        throw new Error('API did not return an image');
-                    }
-
-                    const blob = await response.blob();
-                    if (!blob || blob.size === 0) {
-                        throw new Error('Received empty image');
-                    }
-
-                    console.log('✅ Screenshot captured! Size:', blob.size, 'bytes');
-                    return URL.createObjectURL(blob);
-                } catch (err) {
-                    console.error('❌ Screenshot failed:', err.message);
-                    
-                    // Try direct request as fallback
-                    try {
-                        console.log('🔄 Trying direct request...');
-                        const directResponse = await fetch(apiUrl, {
-                            method: 'GET',
-                            headers: {
-                                'Accept': 'image/png, image/*',
-                            },
-                        });
-
-                        if (directResponse.ok) {
-                            const blob = await directResponse.blob();
-                            if (blob && blob.size > 0 && blob.type.includes('image')) {
-                                console.log('✅ Direct request succeeded!');
-                                return URL.createObjectURL(blob);
-                            }
-                        }
-                    } catch (directErr) {
-                        console.warn('Direct request failed:', directErr.message);
-                    }
-
-                    throw err;
-                }
+                if (auditData) renderDashboard(auditData.url);
             }
 
             function generateAuditData(storeUrl, scores) {
@@ -1151,63 +1009,72 @@
                 const altScore = scores.alt;
                 summaries.push({
                     title: 'Alt Text Quality',
-                    issue: altScore < 50 ? 'Missing or poorly written alt text on product images.' : 'Alt text is present but could be more descriptive.',
+                    issue: altScore < 50 ? 'Missing or poorly written alt text on product images.' :
+                        'Alt text is present but could be more descriptive.',
                     explanation: 'Makes it harder for Google to understand product images, reducing visibility in search results and Google Images.',
                     impact: altScore < 30 ? 'high' : altScore < 60 ? 'medium' : 'low',
                     score: altScore,
                 });
-                recs.push({ title: 'Improve Image Alt Text', desc: 'Write descriptive alt text for every product image that includes relevant keywords.' });
+                recs.push({ title: 'Improve Image Alt Text',
+                    desc: 'Write descriptive alt text for every product image that includes relevant keywords.' });
 
                 const prodScore = scores.product;
                 summaries.push({
                     title: 'Product Page SEO',
-                    issue: prodScore < 50 ? 'Product titles, descriptions, or meta tags are under-optimized.' : 'Product pages could benefit from richer SEO content.',
+                    issue: prodScore < 50 ? 'Product titles, descriptions, or meta tags are under-optimized.' :
+                        'Product pages could benefit from richer SEO content.',
                     explanation: 'Weak product SEO means lower rankings for product-specific searches, missing high-intent buyers.',
                     impact: prodScore < 30 ? 'high' : prodScore < 60 ? 'medium' : 'low',
                     score: prodScore,
                 });
-                recs.push({ title: 'Optimize Product Pages', desc: 'Optimize product titles with primary keywords, write unique descriptions (200+ words), and use structured data.' });
+                recs.push({ title: 'Optimize Product Pages',
+                    desc: 'Optimize product titles with primary keywords, write unique descriptions (200+ words), and use structured data.' });
 
                 const perfScore = scores.performance;
                 summaries.push({
                     title: 'Performance',
-                    issue: perfScore < 50 ? 'Page load speed is slow, hurting user experience.' : 'Performance could be improved with image optimization and caching.',
+                    issue: perfScore < 50 ? 'Page load speed is slow, hurting user experience.' :
+                        'Performance could be improved with image optimization and caching.',
                     explanation: 'Slow pages increase bounce rates and reduce conversions, especially on mobile devices.',
                     impact: perfScore < 30 ? 'high' : perfScore < 60 ? 'medium' : 'low',
                     score: perfScore,
                 });
-                recs.push({ title: 'Boost Page Speed', desc: 'Compress images, enable browser caching, minify CSS/JS, and use a CDN.' });
+                recs.push({ title: 'Boost Page Speed',
+                    desc: 'Compress images, enable browser caching, minify CSS/JS, and use a CDN.' });
 
                 const mobScore = scores.mobile;
                 summaries.push({
                     title: 'Mobile Friendliness',
-                    issue: mobScore < 50 ? 'Store is not fully optimized for mobile devices.' : 'Mobile experience could be enhanced for better usability.',
+                    issue: mobScore < 50 ? 'Store is not fully optimized for mobile devices.' :
+                        'Mobile experience could be enhanced for better usability.',
                     explanation: 'Over 60% of Shopify traffic comes from mobile. Poor mobile experience loses buyers.',
                     impact: mobScore < 30 ? 'high' : mobScore < 60 ? 'medium' : 'low',
                     score: mobScore,
                 });
-                recs.push({ title: 'Enhance Mobile Experience', desc: 'Use a responsive theme, ensure touch targets are large, and simplify mobile navigation.' });
+                recs.push({ title: 'Enhance Mobile Experience',
+                    desc: 'Use a responsive theme, ensure touch targets are large, and simplify mobile navigation.' });
 
                 const overall = scores.overall;
                 summaries.unshift({
                     title: 'Overall SEO Health',
-                    issue: overall < 50 ? 'Multiple critical SEO issues are hurting your store\'s visibility.' : 'Your store has some SEO gaps that need attention.',
+                    issue: overall < 50 ? 'Multiple critical SEO issues are hurting your store\'s visibility.' :
+                        'Your store has some SEO gaps that need attention.',
                     explanation: 'Poor SEO means fewer buyers find your store, leading to lost sales and lower revenue.',
                     impact: overall < 30 ? 'high' : overall < 60 ? 'medium' : 'low',
                     score: overall,
                 });
-                recs.unshift({ title: 'Audit Summary', desc: 'Prioritize the recommendations above to improve your store\'s discoverability.' });
+                recs.unshift({ title: 'Audit Summary',
+                    desc: 'Prioritize the recommendations above to improve your store\'s discoverability.' });
 
                 const impactOrder = { high: 0, medium: 1, low: 2 };
                 summaries.sort((a, b) => impactOrder[a.impact] - impactOrder[b.impact]);
                 return { url, scores, summaries, recommendations: recs };
             }
 
-            function renderDashboard(storeUrl, screenshotUrl) {
+            function renderDashboard(storeUrl) {
                 const scores = currentScores;
                 const data = generateAuditData(storeUrl, scores);
                 auditData = data;
-                auditData.screenshotUrl = screenshotUrl;
 
                 reportUrl.textContent = data.url;
                 const overall = scores.overall;
@@ -1215,18 +1082,6 @@
                     statusText.textContent = 'Good shape'; } else if (overall >= 40) { statusDot.className = 'dot yellow';
                     statusText.textContent = 'Needs improvement'; } else { statusDot.className = 'dot red';
                     statusText.textContent = 'Critical issues'; }
-
-                if (screenshotUrl) {
-                    screenshotImg.src = screenshotUrl;
-                    screenshotImg.style.display = 'block';
-                    placeholderImg.style.display = 'none';
-                    screenshotError.style.display = 'none';
-                } else {
-                    screenshotImg.style.display = 'none';
-                    placeholderImg.style.display = 'none';
-                    screenshotError.style.display = 'flex';
-                    errorText.textContent = 'Could not capture screenshot. Check your API key or try a different store URL.';
-                }
 
                 const scoreItems = [
                     { key: 'alt', label: 'Alt Text', value: scores.alt },
@@ -1267,6 +1122,34 @@
                 dashboard.classList.add('active');
             }
 
+            // Handle screenshot upload
+            screenshotUpload.addEventListener('change', function(e) {
+                const file = this.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const imageData = event.target.result;
+                    uploadedImageData = imageData;
+                    screenshotImg.src = imageData;
+                    screenshotImg.style.display = 'block';
+                    placeholderImg.style.display = 'none';
+                    removeScreenshotBtn.style.display = 'inline-block';
+                    showToast('✅ Screenshot uploaded successfully!', 'success');
+                };
+                reader.readAsDataURL(file);
+            });
+
+            // Remove screenshot
+            removeScreenshotBtn.addEventListener('click', function() {
+                screenshotImg.style.display = 'none';
+                placeholderImg.style.display = 'flex';
+                removeScreenshotBtn.style.display = 'none';
+                uploadedImageData = null;
+                screenshotUpload.value = '';
+                showToast('Screenshot removed', 'info');
+            });
+
             async function runAudit() {
                 let url = storeUrlInput.value.trim();
                 if (!url) { showToast('Please enter a Shopify store URL.', 'error'); return; }
@@ -1278,20 +1161,10 @@
 
                 loading.classList.add('active');
                 runBtn.disabled = true;
-                let screenshotUrl = null;
 
                 try {
-                    try {
-                        screenshotUrl = await captureScreenshot(url);
-                    } catch (err) {
-                        errorText.textContent = err.message || 'Failed to capture screenshot.';
-                    }
-                    renderDashboard(url, screenshotUrl);
-                    if (screenshotUrl) {
-                        showToast('✅ Audit complete with screenshot!', 'success');
-                    } else {
-                        showToast('⚠️ Audit complete but screenshot failed. Check your API key.', 'error');
-                    }
+                    renderDashboard(url);
+                    showToast('✅ Audit generated! Upload a screenshot to complete the report.', 'success');
                 } catch (err) {
                     showToast('Error: ' + err.message, 'error');
                 } finally {
@@ -1301,16 +1174,29 @@
             }
 
             async function exportPDF() {
-                if (!auditData) { showToast('Run an audit first.', 'error'); return; }
+                if (!auditData) { showToast('Generate an audit first.', 'error'); return; }
+
+                // Check if screenshot is uploaded
+                if (!uploadedImageData) {
+                    showToast('⚠️ Please upload a screenshot before downloading the PDF.', 'error');
+                    return;
+                }
+
                 const btn = downloadBtn;
                 const originalText = btn.innerHTML;
-                btn.innerHTML = '⏳ Generating…';
+                btn.innerHTML = '⏳ Generating PDF…';
                 btn.disabled = true;
 
                 try {
                     const element = document.getElementById('dashboard');
                     element.classList.add('pdf-export');
-                    const canvas = await html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#F5F7FC', logging: false, windowWidth: 1280 });
+                    const canvas = await html2canvas(element, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#F5F7FC',
+                        logging: false,
+                        windowWidth: 1280,
+                    });
                     const imgData = canvas.toDataURL('image/png');
                     const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -1326,10 +1212,11 @@
                         pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
                         heightLeft -= pdf.internal.pageSize.getHeight();
                     }
-                    const filename = `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+                    const filename =
+                        `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
                     pdf.save(filename);
                     element.classList.remove('pdf-export');
-                    showToast('PDF downloaded!', 'success');
+                    showToast('✅ PDF downloaded with screenshot!', 'success');
                 } catch (err) {
                     showToast('Error: ' + err.message, 'error');
                 } finally {
@@ -1362,8 +1249,8 @@
             });
 
             loadSettings();
-            showToast('🔑 New API key loaded! Enter a Shopify URL and click "Run Audit".', 'success');
-            console.log('✅ Shopify SEO Audit Tool loaded with new API key!');
+            showToast('📸 Enter a Shopify URL, generate the audit, then upload a screenshot!', 'info');
+            console.log('✅ Shopify SEO Audit Tool loaded - Upload screenshots manually!');
         })();
     </script>
 </body>
