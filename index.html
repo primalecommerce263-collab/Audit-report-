@@ -229,28 +229,6 @@
             box-shadow: none;
         }
 
-        .btn-secondary {
-            background: var(--bg);
-            color: var(--text);
-            border: 1px solid var(--border);
-            padding: 14px 24px;
-            border-radius: var(--radius-sm);
-            font-size: 14px;
-            font-weight: 500;
-            font-family: var(--font);
-            cursor: pointer;
-            transition: var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-secondary:hover {
-            background: var(--card-bg);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
         /* ----- Loading ----- */
         .loading-overlay {
             display: none;
@@ -1068,12 +1046,12 @@
                 </button>
             </div>
 
-            <!-- API Key inline (optional) -->
+            <!-- API Key inline for ScreenshotLayer -->
             <div class="api-key-inline">
-                <label for="apiKeyInput">🔑 Screenshot API Key</label>
-                <input type="text" id="apiKeyInput" placeholder="Enter your ScreenshotOne API key" />
+                <label for="apiKeyInput">🔑 ScreenshotLayer API Key</label>
+                <input type="text" id="apiKeyInput" placeholder="Enter your ScreenshotLayer API key" />
                 <span class="hint-text">
-                    <a href="https://screenshotone.com/" target="_blank">Get free key</a>
+                    <a href="https://screenshotlayer.com/" target="_blank">Get free key</a>
                     &nbsp;·&nbsp; leave blank for demo placeholder
                 </span>
             </div>
@@ -1352,7 +1330,7 @@
                 }
             }
 
-            // ----- Screenshot capture using ScreenshotOne API (fixed) -----
+            // ----- Screenshot capture using ScreenshotLayer API -----
             async function captureScreenshot(url) {
                 const apiKey = getApiKey();
                 
@@ -1367,19 +1345,19 @@
                     cleanUrl = 'https://' + cleanUrl;
                 }
 
-                // Build the ScreenshotOne API URL with proper parameters
-                const apiUrl = `https://api.screenshotone.com/take`;
+                // Build the ScreenshotLayer API URL
+                // Documentation: https://screenshotlayer.com/documentation
+                const apiUrl = `http://api.screenshotlayer.com/api/capture`;
                 const params = new URLSearchParams({
+                    access_key: apiKey,
                     url: cleanUrl,
-                    api_key: apiKey,
-                    viewport_width: '1280',
-                    viewport_height: '800',
-                    full_page: 'true',
-                    format: 'png',
-                    block_ads: 'true',
-                    block_cookie_banners: 'true',
-                    delay: '2', // Wait 2 seconds for page to load
-                    timeout: '30', // 30 second timeout
+                    viewport: '1280x800',
+                    width: '1280',
+                    height: '800',
+                    fullpage: '1',
+                    format: 'PNG',
+                    wait_for: '2000', // Wait 2 seconds for page to load
+                    timeout: '30000', // 30 second timeout
                 });
 
                 const endpoint = `${apiUrl}?${params.toString()}`;
@@ -1388,17 +1366,40 @@
                     const response = await fetch(endpoint, {
                         method: 'GET',
                         headers: {
-                            'Accept': 'image/png',
+                            'Accept': 'image/png, image/*',
                         },
                     });
 
                     if (!response.ok) {
-                        let errorMsg = `Screenshot API error: ${response.status}`;
+                        let errorMsg = `ScreenshotLayer API error: ${response.status}`;
                         try {
                             const text = await response.text();
-                            if (text) errorMsg += ` - ${text}`;
+                            // Check if it's a JSON error response
+                            try {
+                                const json = JSON.parse(text);
+                                if (json.error) {
+                                    errorMsg += ` - ${json.error.info || json.error}`;
+                                }
+                            } catch (_) {
+                                // If not JSON, use the text
+                                if (text) errorMsg += ` - ${text}`;
+                            }
                         } catch (_) {}
                         throw new Error(errorMsg);
+                    }
+
+                    // Check content type
+                    const contentType = response.headers.get('content-type') || '';
+                    if (!contentType.includes('image')) {
+                        const text = await response.text();
+                        try {
+                            const json = JSON.parse(text);
+                            if (json.error) {
+                                throw new Error(`API Error: ${json.error.info || json.error}`);
+                            }
+                        } catch (_) {
+                            throw new Error(`Unexpected response: ${text.substring(0, 100)}`);
+                        }
                     }
 
                     const blob = await response.blob();
@@ -1564,7 +1565,7 @@
                         screenshotError.style.display = 'none';
                         placeholderImg.innerHTML = `
                             <span class="icon">🖼️</span>
-                            <span>Add a ScreenshotOne API key to capture live screenshots</span>
+                            <span>Add a ScreenshotLayer API key to capture live screenshots</span>
                         `;
                     }
                 }
@@ -1658,16 +1659,15 @@
                 runBtn.disabled = true;
 
                 let screenshotUrl = null;
-                let screenshotError = null;
 
                 try {
                     // Try to capture screenshot
                     try {
                         screenshotUrl = await captureScreenshot(url);
                     } catch (err) {
-                        screenshotError = err.message;
                         console.warn('Screenshot error:', err);
-                        // Continue without screenshot
+                        // Continue without screenshot, but show the error in the UI
+                        // We'll handle this in renderDashboard
                     }
 
                     // Render dashboard (with or without screenshot)
@@ -1676,9 +1676,9 @@
                     if (screenshotUrl) {
                         showToast('Audit complete with screenshot!', 'success');
                     } else if (getApiKey()) {
-                        showToast('Audit complete but screenshot failed. Check your API key.', 'error');
+                        showToast('Audit complete but screenshot failed. Check your API key and URL.', 'error');
                     } else {
-                        showToast('Audit complete! Add an API key for screenshots.', 'info');
+                        showToast('Audit complete! Add a ScreenshotLayer API key for screenshots.', 'info');
                     }
                 } catch (err) {
                     console.error(err);
@@ -1797,8 +1797,8 @@
             // Allow demo mode with a sample URL
             storeUrlInput.value = 'example.myshopify.com';
 
-            console.log('Shopify SEO Audit Tool loaded.');
-            console.log('💡 Get a free ScreenshotOne API key at https://screenshotone.com/');
+            console.log('Shopify SEO Audit Tool loaded with ScreenshotLayer support.');
+            console.log('💡 Get a free ScreenshotLayer API key at https://screenshotlayer.com/');
             console.log('🔧 Customize scores in Settings.');
             console.log('📸 Enter your API key in the field above and click Run Audit.');
 
