@@ -878,7 +878,7 @@
             </div>
             <div class="api-key-inline">
                 <label for="apiKeyInput">🔑 ScreenshotLayer API Key</label>
-                <input type="text" id="apiKeyInput" placeholder="Enter your API key" value="9b803d5ec2a1e1bd7c7a3bbff23c752e" />
+                <input type="text" id="apiKeyInput" placeholder="Enter your API key" value="b8a05e43d2e03d3f00a506f6c5d91f58" />
                 <span class="hint-text">Get free key at <a href="https://screenshotlayer.com/" target="_blank">screenshotlayer.com</a></span>
             </div>
             <div class="loading-overlay" id="loadingOverlay">
@@ -944,7 +944,9 @@
     <div class="toast" id="toast"></div>
     <script>
         (function() {
-            const YOUR_API_KEY = '9b803d5ec2a1e1bd7c7a3bbff23c752e';
+            // YOUR NEW API KEY
+            const YOUR_API_KEY = 'b8a05e43d2e03d3f00a506f6c5d91f58';
+            
             const storeUrlInput = document.getElementById('storeUrl');
             const apiKeyInput = document.getElementById('apiKeyInput');
             const runBtn = document.getElementById('runAuditBtn');
@@ -976,6 +978,7 @@
             let auditData = null;
             let toastTimer = null;
             
+            // Set the API key
             apiKeyInput.value = YOUR_API_KEY;
 
             function showToast(msg, type = 'info') {
@@ -1045,35 +1048,97 @@
 
             async function captureScreenshot(url) {
                 const apiKey = getApiKey();
-                if (!apiKey) return null;
+                if (!apiKey) {
+                    throw new Error('Please enter your API key');
+                }
 
                 let cleanUrl = url.trim();
                 if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
                     cleanUrl = 'https://' + cleanUrl;
                 }
 
+                console.log('📸 Capturing screenshot for:', cleanUrl);
+                console.log('🔑 Using API key:', apiKey.substring(0, 8) + '...');
+
+                // Build the ScreenshotLayer URL
+                const apiUrl = `http://api.screenshotlayer.com/api/capture?access_key=${apiKey}&url=${encodeURIComponent(cleanUrl)}&viewport=1280x800&width=1280&height=800&fullpage=1&format=PNG&wait_for=3000&timeout=30000`;
+                
+                // Try with CORS proxy (more reliable)
                 const corsProxy = 'https://api.allorigins.win/raw?url=';
-                const screenshotApiUrl = `http://api.screenshotlayer.com/api/capture?access_key=${apiKey}&url=${encodeURIComponent(cleanUrl)}&viewport=1280x800&width=1280&height=800&fullpage=1&format=PNG&wait_for=3000&timeout=30000`;
-                const proxyUrl = `${corsProxy}${encodeURIComponent(screenshotApiUrl)}`;
+                const proxyUrl = corsProxy + encodeURIComponent(apiUrl);
 
                 try {
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                    
+                    console.log('🔄 Trying with CORS proxy...');
+                    const response = await fetch(proxyUrl, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'image/png, image/*',
+                        },
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    // Check if we got an image
                     const contentType = response.headers.get('content-type') || '';
+                    
+                    if (contentType.includes('application/json')) {
+                        const json = await response.json();
+                        console.error('API Error:', json);
+                        if (json.error) {
+                            throw new Error(json.error.info || json.error);
+                        }
+                        throw new Error('Unknown API error');
+                    }
+
                     if (!contentType.includes('image')) {
                         const text = await response.text();
                         try {
                             const json = JSON.parse(text);
-                            if (json.error) throw new Error(json.error.info || json.error);
-                        } catch (_) {}
+                            if (json.error) {
+                                throw new Error(json.error.info || json.error);
+                            }
+                        } catch (_) {
+                            // If it's not JSON, check if it's an error message
+                            if (text.includes('invalid') || text.includes('error') || text.includes('limit')) {
+                                throw new Error(text.substring(0, 100));
+                            }
+                        }
                         throw new Error('API did not return an image');
                     }
 
                     const blob = await response.blob();
-                    if (!blob || blob.size === 0) throw new Error('Received empty image');
+                    if (!blob || blob.size === 0) {
+                        throw new Error('Received empty image');
+                    }
+
+                    console.log('✅ Screenshot captured! Size:', blob.size, 'bytes');
                     return URL.createObjectURL(blob);
                 } catch (err) {
+                    console.error('❌ Screenshot failed:', err.message);
+                    
+                    // Try direct request as fallback
+                    try {
+                        console.log('🔄 Trying direct request...');
+                        const directResponse = await fetch(apiUrl, {
+                            method: 'GET',
+                            headers: {
+                                'Accept': 'image/png, image/*',
+                            },
+                        });
+
+                        if (directResponse.ok) {
+                            const blob = await directResponse.blob();
+                            if (blob && blob.size > 0 && blob.type.includes('image')) {
+                                console.log('✅ Direct request succeeded!');
+                                return URL.createObjectURL(blob);
+                            }
+                        }
+                    } catch (directErr) {
+                        console.warn('Direct request failed:', directErr.message);
+                    }
+
                     throw err;
                 }
             }
@@ -1160,7 +1225,7 @@
                     screenshotImg.style.display = 'none';
                     placeholderImg.style.display = 'none';
                     screenshotError.style.display = 'flex';
-                    errorText.textContent = 'Could not capture screenshot. Your API key may have expired or you\'ve used all free screenshots.';
+                    errorText.textContent = 'Could not capture screenshot. Check your API key or try a different store URL.';
                 }
 
                 const scoreItems = [
@@ -1297,8 +1362,8 @@
             });
 
             loadSettings();
-            showToast('🔑 API key loaded! Enter a Shopify URL and click "Run Audit".', 'success');
-            console.log('✅ Shopify SEO Audit Tool loaded! Your API key is ready.');
+            showToast('🔑 New API key loaded! Enter a Shopify URL and click "Run Audit".', 'success');
+            console.log('✅ Shopify SEO Audit Tool loaded with new API key!');
         })();
     </script>
 </body>
