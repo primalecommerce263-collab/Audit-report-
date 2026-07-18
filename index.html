@@ -741,6 +741,15 @@
         .remove-img-btn:hover {
             background: #DC2626;
         }
+        /* PDF-specific quality improvements */
+        .pdf-export {
+            background: white !important;
+            padding: 20px !important;
+        }
+        .pdf-export .card {
+            box-shadow: none !important;
+            border: 1px solid #e5e7eb !important;
+        }
         @media (max-width: 640px) {
             body {
                 padding: 12px;
@@ -1176,7 +1185,6 @@
             async function exportPDF() {
                 if (!auditData) { showToast('Generate an audit first.', 'error'); return; }
 
-                // Check if screenshot is uploaded
                 if (!uploadedImageData) {
                     showToast('⚠️ Please upload a screenshot before downloading the PDF.', 'error');
                     return;
@@ -1189,36 +1197,43 @@
 
                 try {
                     const element = document.getElementById('dashboard');
-                    element.classList.add('pdf-export');
+                    
+                    // HIGH QUALITY PDF - Scale 3 for crisp text and images
                     const canvas = await html2canvas(element, {
-                        scale: 2,
+                        scale: 3, // Higher scale = better quality
                         useCORS: true,
-                        backgroundColor: '#F5F7FC',
+                        backgroundColor: '#FFFFFF',
                         logging: false,
                         windowWidth: 1280,
+                        width: 1280,
+                        height: element.scrollHeight,
+                        onclone: function(clonedDoc) {
+                            // Make sure all content is visible
+                            const clonedElement = clonedDoc.getElementById('dashboard');
+                            if (clonedElement) {
+                                clonedElement.style.display = 'block';
+                            }
+                        }
                     });
-                    const imgData = canvas.toDataURL('image/png');
+
+                    const imgData = canvas.toDataURL('image/jpeg', 1.0); // Maximum quality JPEG
                     const { jsPDF } = window.jspdf;
                     const pdf = new jsPDF('p', 'mm', 'a4');
+                    
+                    // Calculate dimensions to fit A4 perfectly
                     const pdfWidth = pdf.internal.pageSize.getWidth();
                     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                    let heightLeft = pdfHeight,
-                        position = 0;
-                    pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                    heightLeft -= pdf.internal.pageSize.getHeight();
-                    while (heightLeft > 0) {
-                        position = heightLeft - pdfHeight;
-                        pdf.addPage();
-                        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-                        heightLeft -= pdf.internal.pageSize.getHeight();
-                    }
-                    const filename =
-                        `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
+                    
+                    // Add image to PDF with high quality
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+
+                    const filename = `seo-audit-${auditData.url.replace(/^https?:\/\//, '').replace(/[^a-zA-Z0-9]/g, '-')}.pdf`;
                     pdf.save(filename);
-                    element.classList.remove('pdf-export');
-                    showToast('✅ PDF downloaded with screenshot!', 'success');
+                    
+                    showToast('✅ High-quality PDF downloaded!', 'success');
                 } catch (err) {
-                    showToast('Error: ' + err.message, 'error');
+                    console.error('PDF Error:', err);
+                    showToast('Error generating PDF: ' + err.message, 'error');
                 } finally {
                     btn.innerHTML = originalText;
                     btn.disabled = false;
@@ -1250,7 +1265,7 @@
 
             loadSettings();
             showToast('📸 Enter a Shopify URL, generate the audit, then upload a screenshot!', 'info');
-            console.log('✅ Shopify SEO Audit Tool loaded - Upload screenshots manually!');
+            console.log('✅ Shopify SEO Audit Tool loaded - High-quality PDFs!');
         })();
     </script>
 </body>
