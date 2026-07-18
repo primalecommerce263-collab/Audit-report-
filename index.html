@@ -959,7 +959,7 @@
             background: var(--score-high);
         }
 
-        /* API key input inline */
+        /* API key inline */
         .api-key-inline {
             display: flex;
             align-items: center;
@@ -1007,6 +1007,31 @@
 
         .api-key-inline .hint-text a:hover {
             text-decoration: underline;
+        }
+        
+        /* Screenshot error state */
+        .screenshot-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            color: var(--score-low);
+            padding: 20px;
+            text-align: center;
+        }
+        .screenshot-error .icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+        }
+        .screenshot-error .error-text {
+            font-size: 14px;
+            max-width: 300px;
         }
     </style>
 </head>
@@ -1092,6 +1117,10 @@
                                 <span>Screenshot will appear here</span>
                             </div>
                             <img id="screenshotImg" style="display:none;" alt="Store homepage screenshot" />
+                            <div class="screenshot-error" id="screenshotError" style="display:none;">
+                                <div class="icon">⚠️</div>
+                                <div class="error-text">Failed to capture screenshot. Please check your API key.</div>
+                            </div>
                         </div>
                     </div>
 
@@ -1208,6 +1237,7 @@
             const statusText = document.getElementById('statusText');
             const screenshotImg = document.getElementById('screenshotImg');
             const placeholderImg = document.getElementById('placeholderImg');
+            const screenshotError = document.getElementById('screenshotError');
             const scoreGrid = document.getElementById('scoreGrid');
             const summaryList = document.getElementById('summaryList');
             const recList = document.getElementById('recList');
@@ -1322,35 +1352,71 @@
                 }
             }
 
-            // ----- Screenshot capture -----
+            // ----- Screenshot capture using ScreenshotOne API (fixed) -----
             async function captureScreenshot(url) {
                 const apiKey = getApiKey();
+                
+                // If no API key, return null (will show placeholder)
                 if (!apiKey) {
-                    // Demo mode: return a placeholder
                     return null;
                 }
 
-                // Use ScreenshotOne API
-                const cleanUrl = url.startsWith('http') ? url : 'https://' + url;
-                const endpoint =
-                    `https://api.screenshotone.com/take?url=${encodeURIComponent(cleanUrl)}&api_key=${apiKey}&viewport_width=1280&viewport_height=800&full_page=true&format=png&block_ads=true&block_cookie_banners=true`;
+                // Clean up the URL
+                let cleanUrl = url.trim();
+                if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+                    cleanUrl = 'https://' + cleanUrl;
+                }
+
+                // Build the ScreenshotOne API URL with proper parameters
+                const apiUrl = `https://api.screenshotone.com/take`;
+                const params = new URLSearchParams({
+                    url: cleanUrl,
+                    api_key: apiKey,
+                    viewport_width: '1280',
+                    viewport_height: '800',
+                    full_page: 'true',
+                    format: 'png',
+                    block_ads: 'true',
+                    block_cookie_banners: 'true',
+                    delay: '2', // Wait 2 seconds for page to load
+                    timeout: '30', // 30 second timeout
+                });
+
+                const endpoint = `${apiUrl}?${params.toString()}`;
 
                 try {
                     const response = await fetch(endpoint, {
                         method: 'GET',
-                        headers: { 'Accept': 'image/png' },
+                        headers: {
+                            'Accept': 'image/png',
+                        },
                     });
 
                     if (!response.ok) {
-                        const text = await response.text();
-                        throw new Error(`Screenshot API error: ${response.status} ${text}`);
+                        let errorMsg = `Screenshot API error: ${response.status}`;
+                        try {
+                            const text = await response.text();
+                            if (text) errorMsg += ` - ${text}`;
+                        } catch (_) {}
+                        throw new Error(errorMsg);
                     }
 
                     const blob = await response.blob();
+                    
+                    // Check if we got a valid image
+                    if (!blob || blob.size === 0) {
+                        throw new Error('Received empty image from API');
+                    }
+                    
+                    // Check if it's actually an image
+                    if (!blob.type.startsWith('image/')) {
+                        throw new Error('API returned non-image response. Please check your API key.');
+                    }
+
                     return URL.createObjectURL(blob);
                 } catch (err) {
-                    console.warn('Screenshot capture failed:', err);
-                    return null;
+                    console.error('Screenshot capture failed:', err);
+                    throw err; // Re-throw to handle in the main function
                 }
             }
 
@@ -1460,6 +1526,7 @@
                 const scores = currentScores;
                 const data = generateAuditData(storeUrl, scores);
                 auditData = data;
+                auditData.screenshotUrl = screenshotUrl; // Store for PDF export
 
                 // Store URL
                 reportUrl.textContent = data.url;
@@ -1477,18 +1544,29 @@
                     statusText.textContent = 'Critical issues';
                 }
 
-                // Screenshot
+                // Screenshot - show/hide appropriate elements
                 if (screenshotUrl) {
                     screenshotImg.src = screenshotUrl;
                     screenshotImg.style.display = 'block';
                     placeholderImg.style.display = 'none';
+                    screenshotError.style.display = 'none';
                 } else {
                     screenshotImg.style.display = 'none';
-                    placeholderImg.style.display = 'flex';
-                    placeholderImg.innerHTML = `
-                        <span class="icon">🖼️</span>
-                        <span>Demo mode — add API key for real screenshots</span>
-                    `;
+                    // Check if we have an API key but it failed, or no key at all
+                    const hasKey = getApiKey();
+                    if (hasKey) {
+                        // API key exists but screenshot failed
+                        placeholderImg.style.display = 'none';
+                        screenshotError.style.display = 'flex';
+                    } else {
+                        // No API key - show placeholder
+                        placeholderImg.style.display = 'flex';
+                        screenshotError.style.display = 'none';
+                        placeholderImg.innerHTML = `
+                            <span class="icon">🖼️</span>
+                            <span>Add a ScreenshotOne API key to capture live screenshots</span>
+                        `;
+                    }
                 }
 
                 // Score cards
@@ -1579,14 +1657,29 @@
                 loading.classList.add('active');
                 runBtn.disabled = true;
 
+                let screenshotUrl = null;
+                let screenshotError = null;
+
                 try {
-                    // Capture screenshot
-                    const screenshotUrl = await captureScreenshot(url);
+                    // Try to capture screenshot
+                    try {
+                        screenshotUrl = await captureScreenshot(url);
+                    } catch (err) {
+                        screenshotError = err.message;
+                        console.warn('Screenshot error:', err);
+                        // Continue without screenshot
+                    }
 
-                    // Render dashboard
+                    // Render dashboard (with or without screenshot)
                     renderDashboard(url, screenshotUrl);
-
-                    showToast('Audit complete!', 'success');
+                    
+                    if (screenshotUrl) {
+                        showToast('Audit complete with screenshot!', 'success');
+                    } else if (getApiKey()) {
+                        showToast('Audit complete but screenshot failed. Check your API key.', 'error');
+                    } else {
+                        showToast('Audit complete! Add an API key for screenshots.', 'info');
+                    }
                 } catch (err) {
                     console.error(err);
                     showToast('Error running audit: ' + err.message, 'error');
@@ -1707,6 +1800,7 @@
             console.log('Shopify SEO Audit Tool loaded.');
             console.log('💡 Get a free ScreenshotOne API key at https://screenshotone.com/');
             console.log('🔧 Customize scores in Settings.');
+            console.log('📸 Enter your API key in the field above and click Run Audit.');
 
         })();
     </script>
