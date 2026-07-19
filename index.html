@@ -42,6 +42,60 @@
             font-size: 16px;
             margin-bottom: 32px;
         }
+
+        /* ===== STORE URL SECTION ===== */
+        .url-section {
+            margin-bottom: 24px;
+        }
+        .url-section label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 6px;
+        }
+        .url-section .url-input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+        .url-section .url-input-wrap:focus-within {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+            background: white;
+        }
+        .url-section .url-input-wrap .prefix {
+            padding: 12px 0 12px 16px;
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .url-section .url-input-wrap input {
+            flex: 1;
+            padding: 12px 16px 12px 8px;
+            border: none;
+            background: transparent;
+            font-size: 15px;
+            font-family: inherit;
+            color: #1a202c;
+            outline: none;
+            min-width: 0;
+        }
+        .url-section .url-input-wrap input::placeholder {
+            color: #a0aec0;
+        }
+        .url-section .hint {
+            font-size: 12px;
+            color: #a0aec0;
+            margin-top: 6px;
+        }
+
+        /* ===== UPLOAD AREA ===== */
         .upload-area {
             border: 2px dashed #e2e8f0;
             border-radius: 16px;
@@ -50,7 +104,7 @@
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
-            min-height: 300px;
+            min-height: 250px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -109,6 +163,8 @@
             transition: all 0.2s;
             display: none;
             z-index: 10;
+            align-items: center;
+            justify-content: center;
         }
         .remove-btn:hover {
             background: #e53e3e;
@@ -116,8 +172,6 @@
         }
         .remove-btn.visible {
             display: flex;
-            align-items: center;
-            justify-content: center;
         }
         .upload-area .image-wrapper {
             position: relative;
@@ -128,6 +182,8 @@
             height: auto;
             border-radius: 16px;
         }
+
+        /* ===== SCORE SECTION ===== */
         .score-section {
             margin-top: 32px;
             padding: 24px;
@@ -197,6 +253,34 @@
             background: #fed7d7;
             color: #9b2c2c;
         }
+
+        /* ===== SLIDER ===== */
+        .score-input-group {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .score-input-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        .score-input-group input[type="range"] {
+            flex: 1;
+            min-width: 150px;
+            accent-color: #4299e1;
+        }
+        .score-input-group .value-display {
+            font-size: 20px;
+            font-weight: 700;
+            color: #4299e1;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* ===== EXPLANATION ===== */
         .explanation {
             margin-top: 16px;
             padding: 16px 20px;
@@ -223,6 +307,8 @@
         .explanation .impact strong {
             color: #2d3748;
         }
+
+        /* ===== BUTTONS ===== */
         .btn-group {
             margin-top: 24px;
             display: flex;
@@ -281,30 +367,32 @@
             border-color: #4299e1;
             color: #4299e1;
         }
-        .score-input-group {
-            margin-top: 16px;
-            display: flex;
+
+        /* ===== LOADING ===== */
+        .loading {
+            display: none;
             align-items: center;
             gap: 12px;
-            flex-wrap: wrap;
-        }
-        .score-input-group label {
+            color: #718096;
             font-size: 14px;
-            font-weight: 500;
-            color: #4a5568;
+            margin-top: 16px;
         }
-        .score-input-group input[type="range"] {
-            flex: 1;
-            min-width: 150px;
-            accent-color: #4299e1;
+        .loading.active {
+            display: flex;
         }
-        .score-input-group .value-display {
-            font-size: 20px;
-            font-weight: 700;
-            color: #4299e1;
-            min-width: 40px;
-            text-align: center;
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #4299e1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== TOAST ===== */
         .toast {
             position: fixed;
             bottom: 30px;
@@ -332,28 +420,8 @@
         .toast.success {
             background: #38a169;
         }
-        .loading {
-            display: none;
-            align-items: center;
-            gap: 12px;
-            color: #718096;
-            font-size: 14px;
-            margin-top: 16px;
-        }
-        .loading.active {
-            display: flex;
-        }
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 3px solid #e2e8f0;
-            border-top-color: #4299e1;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+
+        /* ===== FOOTER ===== */
         .footer {
             margin-top: 32px;
             padding-top: 20px;
@@ -362,6 +430,8 @@
             font-size: 13px;
             color: #a0aec0;
         }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 600px) {
             .container {
                 padding: 24px;
@@ -382,6 +452,18 @@
             .btn {
                 justify-content: center;
             }
+            .url-section .url-input-wrap {
+                flex-wrap: wrap;
+            }
+            .url-section .url-input-wrap .prefix {
+                width: 100%;
+                padding: 8px 16px 0;
+                font-size: 12px;
+            }
+            .url-section .url-input-wrap input {
+                padding: 10px 16px;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -389,9 +471,19 @@
 
     <div class="container">
         <h1>🔍 Alt Text SEO Audit</h1>
-        <p class="subtitle">Upload a screenshot of your product image to analyze alt text quality</p>
+        <p class="subtitle">Analyze your product image alt text quality</p>
 
-        <!-- Upload Area -->
+        <!-- ===== STORE URL ===== -->
+        <div class="url-section">
+            <label for="storeUrl">Store URL</label>
+            <div class="url-input-wrap">
+                <span class="prefix">https://</span>
+                <input type="text" id="storeUrl" placeholder="your-store.myshopify.com" value="gymshark.myshopify.com" />
+            </div>
+            <div class="hint">Enter the Shopify store URL (optional, appears in the report)</div>
+        </div>
+
+        <!-- ===== UPLOAD AREA ===== -->
         <div class="upload-area" id="uploadArea">
             <div class="icon">🖼️</div>
             <div class="text">Click or drag to upload a screenshot</div>
@@ -403,7 +495,7 @@
             </div>
         </div>
 
-        <!-- Score Section -->
+        <!-- ===== SCORE SECTION ===== -->
         <div class="score-section" id="scoreSection">
             <div class="score-row">
                 <span class="score-label">Alt Text Score</span>
@@ -435,7 +527,7 @@
             </div>
         </div>
 
-        <!-- Buttons -->
+        <!-- ===== BUTTONS ===== -->
         <div class="btn-group">
             <button class="btn btn-primary" id="generateBtn" disabled>
                 📊 Generate Audit
@@ -459,12 +551,13 @@
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
     <script>
         (function() {
             // ===== DOM REFERENCES =====
+            const storeUrlInput = document.getElementById('storeUrl');
             const uploadArea = document.getElementById('uploadArea');
             const imageInput = document.getElementById('imageInput');
             const imageWrapper = document.getElementById('imageWrapper');
@@ -488,6 +581,7 @@
             let uploadedImage = null;
             let currentScore = 0;
             let toastTimer = null;
+            let storeUrl = '';
 
             // ===== SCORE EXPLANATIONS =====
             const explanations = {
@@ -523,7 +617,7 @@
                 }, 4000);
             }
 
-            // ===== UPDATE SCORE DISPLAY =====
+            // ===== UPDATE SCORE =====
             function updateScore(score) {
                 currentScore = score;
                 scoreDisplay.innerHTML = `${score}<span class="denom">/100</span>`;
@@ -595,13 +689,12 @@
                     return;
                 }
 
-                // Show loading
+                storeUrl = storeUrlInput.value.trim() || 'Not provided';
+
                 loading.classList.add('active');
                 generateBtn.disabled = true;
 
-                // Simulate audit generation
                 setTimeout(() => {
-                    // Random score between 10-90 for demo
                     const score = Math.floor(Math.random() * 80) + 10;
                     updateScore(score);
                     scoreSection.classList.add('visible');
@@ -624,11 +717,12 @@
                     return;
                 }
 
+                const url = storeUrlInput.value.trim() || 'Not provided';
+
                 pdfBtn.disabled = true;
                 pdfBtn.innerHTML = '⏳ Generating...';
 
                 try {
-                    // Build PDF template
                     const template = document.createElement('div');
                     template.style.cssText = `
                         width: 800px;
@@ -645,6 +739,10 @@
                         </div>
                         <h1 style="font-size: 32px; font-weight: 700; margin-bottom: 8px;">Alt Text SEO Report</h1>
                         <p style="font-size: 18px; color: #718096; margin-bottom: 30px;">Product image alt text analysis</p>
+                        <div style="background: #f7fafc; padding: 16px 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #4299e1;">
+                            <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #718096; font-weight: 600;">Store URL</div>
+                            <div style="font-size: 18px; font-weight: 600; margin-top: 2px;">${url}</div>
+                        </div>
                         <div style="background: #f7fafc; padding: 20px 24px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #4299e1;">
                             <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: #718096; font-weight: 600;">Screenshot</div>
                             <img src="${uploadedImage}" style="width: 100%; max-height: 400px; object-fit: contain; margin-top: 10px; border-radius: 8px;" />
@@ -673,7 +771,6 @@
                         </div>
                     `;
 
-                    // Temporarily add to DOM for rendering
                     const wrapper = document.createElement('div');
                     wrapper.style.cssText = 'position: fixed; top: -9999px; left: 0; width: 800px; background: white; z-index: 9999;';
                     wrapper.appendChild(template);
@@ -726,6 +823,7 @@
                 pdfBtn.disabled = true;
                 scoreSlider.value = 0;
                 currentScore = 0;
+                storeUrlInput.value = '';
                 showToast('Reset complete', 'info');
             });
 
