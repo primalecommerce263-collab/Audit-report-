@@ -99,16 +99,18 @@
         .upload-area {
             border: 2px dashed #e2e8f0;
             border-radius: 16px;
-            padding: 40px;
+            padding: 0;
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
             position: relative;
-            min-height: 250px;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            background: #fafcff;
         }
         .upload-area:hover {
             border-color: #4299e1;
@@ -119,6 +121,23 @@
             background: #f0fff4;
             padding: 0;
             min-height: auto;
+        }
+        .upload-area .upload-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.3s ease;
+        }
+        .upload-area.has-image .upload-content {
+            opacity: 0;
+            pointer-events: none;
         }
         .upload-area .icon {
             font-size: 48px;
@@ -141,14 +160,28 @@
             height: 100%;
             opacity: 0;
             cursor: pointer;
+            z-index: 5;
         }
-        .upload-area img {
-            max-width: 100%;
-            max-height: 500px;
-            border-radius: 16px;
+        
+        /* ===== IMAGE PREVIEW ===== */
+        .upload-area .image-preview {
+            width: 100%;
+            height: auto;
+            display: none;
+            position: relative;
+        }
+        .upload-area.has-image .image-preview {
             display: block;
         }
-        .remove-btn {
+        .upload-area .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 14px;
+            object-fit: contain;
+            max-height: 500px;
+        }
+        .upload-area .image-preview .remove-btn {
             position: absolute;
             top: 12px;
             right: 12px;
@@ -156,31 +189,20 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            font-size: 16px;
+            width: 36px;
+            height: 36px;
+            font-size: 18px;
             cursor: pointer;
             transition: all 0.2s;
-            display: none;
-            z-index: 10;
+            display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
-        .remove-btn:hover {
+        .upload-area .image-preview .remove-btn:hover {
             background: #e53e3e;
             transform: scale(1.1);
-        }
-        .remove-btn.visible {
-            display: flex;
-        }
-        .upload-area .image-wrapper {
-            position: relative;
-            width: 100%;
-        }
-        .upload-area .image-wrapper img {
-            width: 100%;
-            height: auto;
-            border-radius: 16px;
         }
 
         /* ===== SCORE SECTION ===== */
@@ -443,8 +465,10 @@
                 font-size: 36px;
             }
             .upload-area {
-                padding: 24px;
                 min-height: 200px;
+            }
+            .upload-area .upload-content {
+                padding: 24px;
             }
             .btn-group {
                 flex-direction: column;
@@ -485,11 +509,18 @@
 
         <!-- ===== UPLOAD AREA ===== -->
         <div class="upload-area" id="uploadArea">
-            <div class="icon">🖼️</div>
-            <div class="text">Click or drag to upload a screenshot</div>
-            <div class="hint">PNG or JPG recommended</div>
+            <!-- Upload Content (shown when no image) -->
+            <div class="upload-content" id="uploadContent">
+                <div class="icon">🖼️</div>
+                <div class="text">Click or drag to upload a screenshot</div>
+                <div class="hint">PNG or JPG recommended</div>
+            </div>
+            
+            <!-- File Input -->
             <input type="file" id="imageInput" accept="image/*" />
-            <div class="image-wrapper" id="imageWrapper" style="display:none;">
+            
+            <!-- Image Preview (shown when image is uploaded) -->
+            <div class="image-preview" id="imagePreview">
                 <img id="previewImage" alt="Uploaded screenshot" />
                 <button class="remove-btn" id="removeBtn">✕</button>
             </div>
@@ -559,8 +590,9 @@
             // ===== DOM REFERENCES =====
             const storeUrlInput = document.getElementById('storeUrl');
             const uploadArea = document.getElementById('uploadArea');
+            const uploadContent = document.getElementById('uploadContent');
             const imageInput = document.getElementById('imageInput');
-            const imageWrapper = document.getElementById('imageWrapper');
+            const imagePreview = document.getElementById('imagePreview');
             const previewImage = document.getElementById('previewImage');
             const removeBtn = document.getElementById('removeBtn');
             const scoreSection = document.getElementById('scoreSection');
@@ -581,7 +613,6 @@
             let uploadedImage = null;
             let currentScore = 0;
             let toastTimer = null;
-            let storeUrl = '';
 
             // ===== SCORE EXPLANATIONS =====
             const explanations = {
@@ -660,9 +691,12 @@
                     const imageData = event.target.result;
                     uploadedImage = imageData;
                     previewImage.src = imageData;
-                    imageWrapper.style.display = 'block';
+                    
+                    // Show image preview, hide upload content
                     uploadArea.classList.add('has-image');
-                    removeBtn.classList.add('visible');
+                    imagePreview.style.display = 'block';
+                    uploadContent.style.display = 'none';
+                    
                     generateBtn.disabled = false;
                     showToast('✅ Image uploaded successfully!', 'success');
                 };
@@ -672,9 +706,13 @@
             // ===== REMOVE IMAGE =====
             removeBtn.addEventListener('click', function() {
                 uploadedImage = null;
-                imageWrapper.style.display = 'none';
+                previewImage.src = '';
+                
+                // Hide image preview, show upload content
                 uploadArea.classList.remove('has-image');
-                removeBtn.classList.remove('visible');
+                imagePreview.style.display = 'none';
+                uploadContent.style.display = 'flex';
+                
                 imageInput.value = '';
                 generateBtn.disabled = true;
                 pdfBtn.disabled = true;
@@ -814,16 +852,16 @@
             // ===== RESET =====
             resetBtn.addEventListener('click', function() {
                 uploadedImage = null;
-                imageWrapper.style.display = 'none';
+                previewImage.src = '';
+                imagePreview.style.display = 'none';
+                uploadContent.style.display = 'flex';
                 uploadArea.classList.remove('has-image');
-                removeBtn.classList.remove('visible');
                 imageInput.value = '';
                 scoreSection.classList.remove('visible');
                 generateBtn.disabled = true;
                 pdfBtn.disabled = true;
                 scoreSlider.value = 0;
                 currentScore = 0;
-                storeUrlInput.value = '';
                 showToast('Reset complete', 'info');
             });
 
